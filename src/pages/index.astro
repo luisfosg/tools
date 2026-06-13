@@ -17,7 +17,12 @@ import { projects } from "../data/projects";
 
     <!-- Project Grid -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {projects.map((p) => (
+      {projects
+        .sort((a, b) => {
+          const order = { active: 0, wip: 1, planned: 2 };
+          return order[a.status] - order[b.status];
+        })
+        .map((p) => (
         <a
           href={`/tools/${p.slug}`}
           class="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 transition-all hover:-translate-y-1 hover:shadow-xl hover:ring-indigo-200"
