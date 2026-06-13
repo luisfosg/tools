@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TimestampTool from "../components/TimestampTool";
+import { projects } from "../data/projects";
+
+const project = projects.find((p) => p.slug === "timestamp");
+---
+
+<Layout title={`${project?.title ?? "Timestamp"} — Tools`}>
+  <div class="mx-auto max-w-5xl px-4 pt-4">
+    <a
+      href="/tools/"
+      class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
+    >
+      <span class="text-lg leading-none">←</span>
+      Tools
+    </a>
+  </div>
+  <TimestampTool client:load />
+</Layout>

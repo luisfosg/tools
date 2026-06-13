@@ -15,4 +15,12 @@ export const projects: Project[] = [
     icon: "📊",
     status: "active",
   },
+  {
+    slug: "timestamp",
+    title: "Timestamp",
+    description:
+      "Conversor de timestamps, zonas horarias, diferencias entre fechas y formateo. Gestiona horas y fechas en un solo lugar.",
+    icon: "⏱️",
+    status: "active",
+  },
 ];
