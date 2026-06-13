@@ -1,24 +1,24 @@
-# Noteffy
+# Tools
 
-Colección de herramientas y proyectos — hosteada en **GitHub Pages**.
+Colección de herramientas — hosteada en **GitHub Pages**.
 
-👉 [noteffy.xyz](https://luisfosg.github.io/noteffy/) _(aka `luisfosg.github.io/noteffy/`)_
+👉 [luisfosg.github.io/noteffy](https://luisfosg.github.io/noteffy/)
 
-## Proyectos
+## Herramientas
 
-| Proyecto | Descripción |
+| Herramienta | Descripción |
 |---|---|
-| [📊 Calculadora de Notas](https://luisfosg.github.io/noteffy/projects/grade-calculator) | Calculadora de notas ponderadas en tiempo real |
+| [📊 Noteffy](https://luisfosg.github.io/noteffy/projects/grade-calculator) | Calculadora de notas ponderadas en tiempo real |
 
-## Agregar un proyecto nuevo
+## Agregar una herramienta nueva
 
 1. Crear la página en `src/pages/projects/<slug>.astro`
 2. Agregar la entrada en `src/data/projects.ts`
 
 ```ts
 {
-  slug: "mi-proyecto",
-  title: "Mi Proyecto",
+  slug: "mi-herramienta",
+  title: "Mi Herramienta",
   description: "Breve descripción",
   icon: "🚀",
   status: "active", // "active" | "wip" | "planned"
@@ -31,7 +31,7 @@ Colección de herramientas y proyectos — hosteada en **GitHub Pages**.
 
 - **[Astro](https://astro.build)** — Static Site Generator
 - **[React](https://react.dev)** — Componentes interactivos
-- **[Tailwind CSS](https://tailwindcss.com)** — Estilos
+- **[Tailwind CSS v4](https://tailwindcss.com)** — Estilos
 - **[pnpm](https://pnpm.io)** — Package manager
 
 ## Desarrollo local
