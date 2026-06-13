@@ -9,10 +9,13 @@ Colección de herramientas — hosteada en **GitHub Pages**.
 | Herramienta | Descripción |
 |---|---|
 | [📊 Noteffy](https://luisfosg.github.io/tools/noteffy) | Calculadora de notas ponderadas en tiempo real |
+| [📱 QR Generator](https://luisfosg.github.io/tools/qr-generator) | Generador de QR con personalización completa: colores, gradientes, estilos, logo y descarga |
+| [⏱️ Timestamp](https://luisfosg.github.io/tools/timestamp) | Conversor de timestamps, zonas horarias, diferencias entre fechas y formateo |
+| [🏦 IBAN Generator](https://luisfosg.github.io/tools/iban-generator) | Generador de IBANs de prueba para la UE con datos bancarios consistentes |
 
 ## Agregar una herramienta nueva
 
-1. Crear la página en `src/pages/projects/<slug>.astro`
+1. Crear la página en `src/pages/<slug>.astro`
 2. Agregar la entrada en `src/data/projects.ts`
 
 ```ts
@@ -26,6 +29,7 @@ Colección de herramientas — hosteada en **GitHub Pages**.
 ```
 
 3. La landing page lo muestra automáticamente.
+4. Actualizar este README con la nueva herramienta.
 
 ## Stack
 
