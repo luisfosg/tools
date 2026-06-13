@@ -31,4 +31,12 @@ export const projects: Project[] = [
     icon: "🏦",
     status: "wip",
   },
+  {
+    slug: "qr-generator",
+    title: "QR Generator",
+    description:
+      "Generador de QR con personalización completa: colores, gradientes, estilos, logo y descarga en PNG/SVG/JPG.",
+    icon: "📱",
+    status: "active",
+  },
 ];
