@@ -1,32 +1,45 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
-const DEFAULT_DATA = {
-  categories: [
-    {
-      name: "Actividades",
-      items: [
-        { name: "Actividad 1", score: 10, maxScore: 10, weight: 5 },
-        { name: "Actividad 2", score: 10, maxScore: 10, weight: 5 },
-      ],
-    },
-    {
-      name: "Exámenes",
-      items: [
-        { name: "Examen 1", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 2", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 3", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 4", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 5", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 6", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 7", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 8", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 9", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen 10", score: 10, maxScore: 10, weight: 0.2 },
-        { name: "Examen Final", score: 10, maxScore: 10, weight: 10 },
-      ],
-    },
-  ],
-};
+const STORAGE_KEY = "noteffy-data";
+
+const DEFAULT_CATEGORIES = [
+  {
+    name: "Actividades",
+    items: [
+      { name: "Actividad 1", score: 10, maxScore: 10, weight: 5 },
+      { name: "Actividad 2", score: 10, maxScore: 10, weight: 5 },
+    ],
+  },
+  {
+    name: "Exámenes",
+    items: [
+      { name: "Examen 1", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 2", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 3", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 4", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 5", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 6", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 7", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 8", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 9", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen 10", score: 10, maxScore: 10, weight: 0.2 },
+      { name: "Examen Final", score: 10, maxScore: 10, weight: 10 },
+    ],
+  },
+];
+
+function loadFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.categories) return parsed;
+    }
+  } catch {
+    /* ignore corrupt data */
+  }
+  return null;
+}
 
 function getGradeColor(pct) {
   if (pct >= 90) return "text-green-600";
@@ -53,8 +66,26 @@ function getClassification(pct) {
 }
 
 export default function GradeCalculator() {
-  const [categories, setCategories] = useState(DEFAULT_DATA.categories);
-  const [collapsed, setCollapsed] = useState({});
+  const saved = loadFromStorage();
+  const [categories, setCategories] = useState(
+    saved?.categories ?? DEFAULT_CATEGORIES,
+  );
+  const [collapsed, setCollapsed] = useState(saved?.collapsed ?? {});
+  const saveTimer = useRef(null);
+
+  /* Persist to localStorage on every change (debounced) */
+  useEffect(() => {
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ categories, collapsed }),
+      );
+    }, 400);
+    return () => {
+      if (saveTimer.current) clearTimeout(saveTimer.current);
+    };
+  }, [categories, collapsed]);
 
   function updateScore(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
