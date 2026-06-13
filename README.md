@@ -2,13 +2,13 @@
 
 Colección de herramientas — hosteada en **GitHub Pages**.
 
-👉 [luisfosg.github.io/noteffy](https://luisfosg.github.io/noteffy/)
+👉 [luisfosg.github.io/tools](https://luisfosg.github.io/tools/)
 
 ## Herramientas
 
 | Herramienta | Descripción |
 |---|---|
-| [📊 Noteffy](https://luisfosg.github.io/noteffy/projects/grade-calculator) | Calculadora de notas ponderadas en tiempo real |
+| [📊 Noteffy](https://luisfosg.github.io/tools/noteffy) | Calculadora de notas ponderadas en tiempo real |
 
 ## Agregar una herramienta nueva
 
