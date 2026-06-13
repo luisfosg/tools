@@ -127,50 +127,50 @@ export default function GradeCalculator() {
     }, [categories]);
 
   return (
-    <div class="mx-auto max-w-4xl space-y-6 px-4 py-8">
+    <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
       {/* Header */}
-      <header class="text-center">
-        <h1 class="text-5xl font-extrabold tracking-tight text-indigo-600">
+      <header className="text-center">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
           Noteffy
         </h1>
-        <p class="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500">
           Calculadora de notas por ponderación
         </p>
       </header>
 
       {/* Summary Card */}
-      <section class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
-        <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <div class="text-center sm:text-left">
-            <p class="text-sm font-medium uppercase tracking-wide text-gray-400">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          <div className="text-center sm:text-left">
+            <p className="text-sm font-medium uppercase tracking-wide text-gray-400">
               Nota ponderada
             </p>
-            <p class={`text-6xl font-black ${getGradeColor(percentage)}`}>
+            <p className={`text-6xl font-black ${getGradeColor(percentage)}`}>
               {percentage.toFixed(1)}
-              <span class="text-2xl font-normal text-gray-400">%</span>
+              <span className="text-2xl font-normal text-gray-400">%</span>
             </p>
-            <p class="mt-1 text-lg font-semibold text-gray-600">
+            <p className="mt-1 text-lg font-semibold text-gray-600">
               {getClassification(percentage)}
             </p>
           </div>
 
-          <div class="flex flex-col items-end gap-1">
-            <div class="flex items-baseline gap-3 text-sm text-gray-400">
+          <div className="flex flex-col items-end gap-1">
+            <div className="flex items-baseline gap-3 text-sm text-gray-400">
               <span>
-                <span class="font-semibold text-gray-700">
+                <span className="font-semibold text-gray-700">
                   {totalWeighted.toFixed(2)}
                 </span>{" "}
                 / {totalWeight.toFixed(2)} pts
               </span>
               <span>
-                <span class="font-semibold text-gray-700">{filledItems}</span> /{" "}
+                <span className="font-semibold text-gray-700">{filledItems}</span> /{" "}
                 {totalItems} ítems
               </span>
             </div>
             {/* Progress bar */}
-            <div class="h-3 w-56 overflow-hidden rounded-full bg-gray-100">
+            <div className="h-3 w-56 overflow-hidden rounded-full bg-gray-100">
               <div
-                class={`h-full rounded-full transition-all duration-500 ${getGradeBg(percentage)}`}
+                className={`h-full rounded-full transition-all duration-500 ${getGradeBg(percentage)}`}
                 style={{ width: `${Math.min(percentage, 100)}%` }}
               />
             </div>
@@ -182,21 +182,21 @@ export default function GradeCalculator() {
       {categories.map((cat, catIdx) => (
         <section
           key={catIdx}
-          class="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100"
+          className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100"
         >
           {/* Category header */}
           <button
             onClick={() => toggleCollapse(catIdx)}
-            class="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-gray-50"
+            className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-gray-50"
           >
-            <div class="flex items-center gap-3">
+            <div className="flex items-center gap-3">
               <span
-                class={`text-xl transition-transform ${collapsed[catIdx] ? "-rotate-90" : ""}`}
+                className={`text-xl transition-transform ${collapsed[catIdx] ? "-rotate-90" : ""}`}
               >
                 ▼
               </span>
-              <h2 class="text-lg font-bold text-gray-800">{cat.name}</h2>
-              <span class="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+              <h2 className="text-lg font-bold text-gray-800">{cat.name}</h2>
+              <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
                 {cat.items.length}
               </span>
             </div>
@@ -205,7 +205,7 @@ export default function GradeCalculator() {
                 e.stopPropagation();
                 addItem(catIdx);
               }}
-              class="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
+              className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
             >
               + Añadir
             </button>
@@ -213,15 +213,15 @@ export default function GradeCalculator() {
 
           {/* Items */}
           {!collapsed[catIdx] && (
-            <div class="divide-y divide-gray-100 border-t border-gray-100">
+            <div className="divide-y divide-gray-100 border-t border-gray-100">
               {/* Header row */}
-              <div class="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 md:flex">
-                <span class="flex-1">Ítem</span>
-                <span class="w-16 text-center">Nota</span>
-                <span class="w-16 text-center">Máx</span>
-                <span class="w-20 text-center">Peso</span>
-                <span class="w-20 text-center">Aporte</span>
-                <span class="w-8" />
+              <div className="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 md:flex">
+                <span className="flex-1">Ítem</span>
+                <span className="w-16 text-center">Nota</span>
+                <span className="w-16 text-center">Máx</span>
+                <span className="w-20 text-center">Peso</span>
+                <span className="w-20 text-center">Aporte</span>
+                <span className="w-8" />
               </div>
 
               {cat.items.map((item, itemIdx) => {
@@ -233,7 +233,7 @@ export default function GradeCalculator() {
                 return (
                   <div
                     key={itemIdx}
-                    class="flex flex-col gap-2 px-6 py-3 md:flex-row md:items-center md:gap-4"
+                    className="flex flex-col gap-2 px-6 py-3 md:flex-row md:items-center md:gap-4"
                   >
                     {/* Name */}
                     <input
@@ -242,7 +242,7 @@ export default function GradeCalculator() {
                       onChange={(e) =>
                         updateItemName(catIdx, itemIdx, e.target.value)
                       }
-                      class="flex-1 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                      className="flex-1 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
                     />
 
                     {/* Score */}
@@ -255,10 +255,10 @@ export default function GradeCalculator() {
                       onChange={(e) =>
                         updateScore(catIdx, itemIdx, e.target.value)
                       }
-                      class="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                      className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
                     />
 
-                    <span class="hidden text-gray-300 md:inline">/</span>
+                    <span className="hidden text-gray-300 md:inline">/</span>
 
                     {/* Max score */}
                     <input
@@ -269,7 +269,7 @@ export default function GradeCalculator() {
                       onChange={(e) =>
                         updateMaxScore(catIdx, itemIdx, e.target.value)
                       }
-                      class="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                      className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
                     />
 
                     {/* Weight */}
@@ -281,11 +281,11 @@ export default function GradeCalculator() {
                       onChange={(e) =>
                         updateWeight(catIdx, itemIdx, e.target.value)
                       }
-                      class="w-20 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                      className="w-20 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
                     />
 
                     {/* Contribution */}
-                    <div class="w-20 text-center text-sm font-semibold text-gray-600">
+                    <div className="w-20 text-center text-sm font-semibold text-gray-600">
                       {contribution !== null
                         ? contribution.toFixed(2)
                         : "–"}
@@ -294,7 +294,7 @@ export default function GradeCalculator() {
                     {/* Delete */}
                     <button
                       onClick={() => removeItem(catIdx, itemIdx)}
-                      class="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                      className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
                       title="Eliminar"
                     >
                       ✕
@@ -308,7 +308,7 @@ export default function GradeCalculator() {
       ))}
 
       {/* Footer */}
-      <footer class="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400">
         Noteffy — calculadora de notas ponderadas en tiempo real
       </footer>
     </div>

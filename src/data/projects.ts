@@ -23,4 +23,12 @@ export const projects: Project[] = [
     icon: "⏱️",
     status: "wip",
   },
+  {
+    slug: "iban-generator",
+    title: "IBAN Generator",
+    description:
+      "Generador de IBANs de prueba para la UE. Seleccioná país y banco, o generá uno random con todos los datos bancarios consistentes.",
+    icon: "🏦",
+    status: "wip",
+  },
 ];

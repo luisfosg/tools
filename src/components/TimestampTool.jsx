@@ -38,12 +38,12 @@ function inputClass(extra = "") {
 
 function resultBox(label, value, sub) {
   return (
-    <div class="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
-      <p class="text-xs font-semibold uppercase tracking-wide text-indigo-400">
+    <div className="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
+      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
         {label}
       </p>
-      <p class="mt-1 text-lg font-semibold text-gray-800 break-all">{value}</p>
-      {sub && <p class="mt-0.5 text-sm text-gray-500">{sub}</p>}
+      <p className="mt-1 text-lg font-semibold text-gray-800 break-all">{value}</p>
+      {sub && <p className="mt-0.5 text-sm text-gray-500">{sub}</p>}
     </div>
   );
 }
@@ -53,7 +53,7 @@ function selectTZ({ value, onChange, label }) {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      class={inputClass("w-full sm:w-auto")}
+      className={inputClass("w-full sm:w-auto")}
     >
       {COMMON_TZS.map((tz) => (
         <option key={tz.value} value={tz.value}>
@@ -98,55 +98,55 @@ function UnixTab() {
   }, [unixTs]);
 
   return (
-    <div class="space-y-4">
+    <div className="space-y-4">
       {/* Mode toggle */}
-      <div class="flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <button onClick={() => setMode("ts")}
-          class={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${mode === "ts" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${mode === "ts" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
           Timestamp a fecha
         </button>
         <button onClick={() => setMode("date")}
-          class={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${mode === "date" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
+          className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-colors ${mode === "date" ? "bg-indigo-600 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200"}`}>
           Fecha a timestamp
         </button>
       </div>
 
       {mode === "ts" ? (
-        <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700">Unix timestamp</label>
-          <div class="flex flex-wrap items-center gap-3">
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-gray-700">Unix timestamp</label>
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="number"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="1735689600"
-              class={inputClass("w-64")}
+              className={inputClass("w-64")}
             />
-            <label class="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-sm text-gray-600">
               <input
                 type="checkbox"
                 checked={inSeconds}
                 onChange={() => setInSeconds(!inSeconds)}
-                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
               />
               Segundos
             </label>
           </div>
         </div>
       ) : (
-        <div class="space-y-3">
-          <label class="text-sm font-medium text-gray-700">Fecha y hora</label>
+        <div className="space-y-3">
+          <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
           <input
             type="datetime-local"
             value={pickerDate}
             onChange={(e) => setPickerDate(e.target.value)}
-            class={inputClass("w-72")}
+            className={inputClass("w-72")}
           />
         </div>
       )}
 
       {results && (
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           {resultBox("UTC", results.utc)}
           {resultBox("Local", results.local)}
           {resultBox("ISO 8601", results.iso)}
@@ -191,33 +191,33 @@ function TZTab() {
   }, [datetime, fromTZ, toTZ]);
 
   return (
-    <div class="space-y-4">
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">Fecha y hora</label>
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
           <input
             type="datetime-local"
             value={datetime}
             onChange={(e) => setDatetime(e.target.value)}
-            class={inputClass("w-full")}
+            className={inputClass("w-full")}
           />
         </div>
       </div>
 
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">Desde zona</label>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Desde zona</label>
           {selectTZ({ value: fromTZ, onChange: setFromTZ, label: "Desde" })}
-          <p class="text-xs text-gray-400">Detectado: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
+          <p className="text-xs text-gray-400">Detectado: {Intl.DateTimeFormat().resolvedOptions().timeZone}</p>
         </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">Hacia zona</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Hacia zona</label>
           {selectTZ({ value: toTZ, onChange: setToTZ, label: "Hacia" })}
         </div>
       </div>
 
       {converted && (
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           {resultBox(`En ${fromTZ}`, converted.from)}
           {resultBox(`En ${toTZ}`, converted.to, `UTC ${converted.offset}`)}
         </div>
@@ -258,40 +258,40 @@ function DiffTab() {
   }, [from, to]);
 
   return (
-    <div class="space-y-4">
-      <div class="grid gap-4 sm:grid-cols-2">
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">Desde</label>
+    <div className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Desde</label>
           <input
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            class={inputClass("w-full")}
+            className={inputClass("w-full")}
           />
         </div>
-        <div class="space-y-2">
-          <label class="text-sm font-medium text-gray-700">Hasta</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Hasta</label>
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            class={inputClass("w-full")}
+            className={inputClass("w-full")}
           />
         </div>
       </div>
 
       {diff && (
         <>
-          <div class="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
-            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-400">
+          <div className="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
+            <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
               Diferencia
             </p>
-            <p class="mt-1 text-2xl font-bold text-gray-800">
+            <p className="mt-1 text-2xl font-bold text-gray-800">
               {diff.years > 0 && `${diff.years}a `}{diff.months > 0 && `${diff.months}m `}{diff.days > 0 && `${diff.days}d `}
               {diff.hours}h {diff.minutes}m {diff.seconds}s
             </p>
           </div>
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {resultBox("Días", diff.totalDays.toLocaleString("es"))}
             {resultBox("Horas", diff.totalHrs.toLocaleString("es"))}
             {resultBox("Minutos", diff.totalMin.toLocaleString("es"))}
@@ -331,19 +331,19 @@ function FormatTab() {
   }, [datetime]);
 
   return (
-    <div class="space-y-4">
-      <div class="space-y-2">
-        <label class="text-sm font-medium text-gray-700">Fecha y hora</label>
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
         <input
           type="datetime-local"
           value={datetime}
           onChange={(e) => setDatetime(e.target.value)}
-          class={inputClass("w-72")}
+          className={inputClass("w-72")}
         />
       </div>
 
       {formats && (
-        <div class="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           {formats.map((f) => resultBox(f.label, f.value))}
         </div>
       )}
@@ -388,24 +388,24 @@ export default function TimestampTool() {
   const [activeTab, setActiveTab] = useState("unix");
 
   return (
-    <div class="mx-auto max-w-4xl space-y-6 px-4 py-8">
+    <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
       {/* Header */}
-      <header class="text-center">
-        <h1 class="text-5xl font-extrabold tracking-tight text-indigo-600">
+      <header className="text-center">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
           Timestamp
         </h1>
-        <p class="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500">
           Conversor de timestamps, zonas horarias, diferencias y formatos
         </p>
       </header>
 
       {/* Tab Nav */}
-      <nav class="flex flex-wrap justify-center gap-2">
+      <nav className="flex flex-wrap justify-center gap-2">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            class={`rounded-full px-5 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-full px-5 py-1.5 text-sm font-medium transition-colors ${
               activeTab === tab.id
                 ? "bg-indigo-600 text-white shadow-sm"
                 : "bg-white text-gray-600 ring-1 ring-gray-200 hover:bg-gray-50"
@@ -417,7 +417,7 @@ export default function TimestampTool() {
       </nav>
 
       {/* Tab Content */}
-      <section class="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
         {activeTab === "unix" && <UnixTab />}
         {activeTab === "tz" && <TZTab />}
         {activeTab === "diff" && <DiffTab />}
@@ -425,7 +425,7 @@ export default function TimestampTool() {
       </section>
 
       {/* Footer */}
-      <footer class="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400">
         Timestamp — gestiona horas y fechas en un solo lugar
       </footer>
     </div>
