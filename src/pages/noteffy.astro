@@ -1,9 +1,9 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import GradeCalculator from "../../components/GradeCalculator";
-import { projects } from "../../data/projects";
+import Layout from "../layouts/Layout.astro";
+import GradeCalculator from "../components/GradeCalculator";
+import { projects } from "../data/projects";
 
-const project = projects.find((p) => p.slug === "grade-calculator");
+const project = projects.find((p) => p.slug === "noteffy");
 ---
 
 <Layout title={`${project?.title ?? "Noteffy"} — Tools`}>
@@ -14,7 +14,7 @@ const project = projects.find((p) => p.slug === "grade-calculator");
       class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800"
     >
       <span class="text-lg leading-none">←</span>
-      Volver a proyectos
+      Tools
     </a>
   </div>
   <GradeCalculator client:load />

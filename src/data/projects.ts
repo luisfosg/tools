@@ -8,7 +8,7 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    slug: "grade-calculator",
+    slug: "noteffy",
     title: "Noteffy",
     description:
       "Calculadora de notas ponderadas en tiempo real. Agrega categorías, ítems y pesos para calcular tu promedio final al instante.",
