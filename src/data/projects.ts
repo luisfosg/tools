@@ -21,6 +21,6 @@ export const projects: Project[] = [
     description:
       "Conversor de timestamps, zonas horarias, diferencias entre fechas y formateo. Gestiona horas y fechas en un solo lugar.",
     icon: "⏱️",
-    status: "active",
+    status: "wip",
   },
 ];
