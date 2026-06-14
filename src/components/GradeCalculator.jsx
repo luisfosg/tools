@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
+import { Toaster, sileo } from "sileo";
+import ConfirmDialog from "./ConfirmDialog.tsx";
 
 const STORAGE_KEY = "noteffy-data";
 
@@ -81,7 +83,8 @@ export default function GradeCalculator() {
         STORAGE_KEY,
         JSON.stringify({ categories, collapsed }),
       );
-    }, 400);
+      sileo.success({ title: "Guardado" });
+    }, 600);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
@@ -114,17 +117,46 @@ export default function GradeCalculator() {
       weight: 1,
     });
     setCategories(next);
+    sileo.success({ title: "Ítem agregado", description: `en ${next[catIdx].name}` });
   }
 
   function removeItem(catIdx, itemIdx) {
+    const item = categories[catIdx].items[itemIdx];
     const next = structuredClone(categories);
     next[catIdx].items.splice(itemIdx, 1);
     setCategories(next);
+    sileo.info({ title: "Ítem eliminado", description: item.name });
   }
 
   function updateItemName(catIdx, itemIdx, name) {
     const next = structuredClone(categories);
     next[catIdx].items[itemIdx].name = name;
+    setCategories(next);
+  }
+
+  function addCategory() {
+    const next = structuredClone(categories);
+    next.push({
+      name: "Nueva sección",
+      items: [
+        { name: "Ítem 1", score: null, maxScore: 10, weight: 1 },
+      ],
+    });
+    setCategories(next);
+    sileo.success({ title: "Sección agregada" });
+  }
+
+  function removeCategory(catIdx) {
+    const name = categories[catIdx].name;
+    const next = structuredClone(categories);
+    next.splice(catIdx, 1);
+    setCategories(next);
+    sileo.info({ title: "Sección eliminada", description: name });
+  }
+
+  function updateCategoryName(catIdx, name) {
+    const next = structuredClone(categories);
+    next[catIdx].name = name;
     setCategories(next);
   }
 
@@ -159,6 +191,8 @@ export default function GradeCalculator() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
+      <Toaster position="top-right" />
+
       {/* Header */}
       <header className="text-center">
         <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
@@ -216,31 +250,52 @@ export default function GradeCalculator() {
           className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100"
         >
           {/* Category header */}
-          <button
-            onClick={() => toggleCollapse(catIdx)}
-            className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-gray-50"
-          >
-            <div className="flex items-center gap-3">
+          <div className="flex w-full items-center justify-between gap-3 px-6 py-3 transition-colors hover:bg-gray-50">
+            <button
+              onClick={() => toggleCollapse(catIdx)}
+              className="flex shrink-0 items-center gap-3 text-left"
+            >
               <span
                 className={`text-xl transition-transform ${collapsed[catIdx] ? "-rotate-90" : ""}`}
               >
                 ▼
               </span>
-              <h2 className="text-lg font-bold text-gray-800">{cat.name}</h2>
               <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
                 {cat.items.length}
               </span>
-            </div>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                addItem(catIdx);
-              }}
-              className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
-            >
-              + Añadir
             </button>
-          </button>
+            <input
+              type="text"
+              value={cat.name}
+              onChange={(e) => updateCategoryName(catIdx, e.target.value)}
+              className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-bold text-gray-800 transition-colors hover:border-gray-200 focus:border-indigo-400 focus:bg-white focus:outline-none"
+            />
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  addItem(catIdx);
+                }}
+                className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
+              >
+                + Añadir
+              </button>
+              <ConfirmDialog
+                title="Eliminar sección"
+                description={`¿Eliminar la sección "${cat.name}" y todos sus ítems?`}
+                confirmLabel="Eliminar"
+                onConfirm={() => removeCategory(catIdx)}
+                trigger={
+                  <button
+                    className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                    title="Eliminar sección"
+                  >
+                    ✕
+                  </button>
+                }
+              />
+            </div>
+          </div>
 
           {/* Items */}
           {!collapsed[catIdx] && (
@@ -337,6 +392,16 @@ export default function GradeCalculator() {
           )}
         </section>
       ))}
+
+      {/* Add section */}
+      <div className="flex justify-center">
+        <button
+          onClick={addCategory}
+          className="inline-flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 px-6 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-indigo-300 hover:text-indigo-500"
+        >
+          + Agregar sección
+        </button>
+      </div>
 
       {/* Footer */}
       <footer className="text-center text-xs text-gray-400">
