@@ -117,7 +117,8 @@ export default function GradeCalculator() {
 
   function updateScore(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
-    next[catIdx].items[itemIdx].score = value === "" ? null : Number(value);
+    const maxScore = next[catIdx].items[itemIdx].maxScore;
+    next[catIdx].items[itemIdx].score = value === "" ? null : Math.min(Number(value), maxScore);
     setCategories(next);
   }
 
@@ -129,7 +130,11 @@ export default function GradeCalculator() {
 
   function updateMaxScore(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
-    next[catIdx].items[itemIdx].maxScore = value === "" ? 10 : Number(value);
+    const newMax = value === "" ? 10 : Number(value);
+    next[catIdx].items[itemIdx].maxScore = newMax;
+    if (next[catIdx].items[itemIdx].score !== null) {
+      next[catIdx].items[itemIdx].score = Math.min(next[catIdx].items[itemIdx].score, newMax);
+    }
     setCategories(next);
   }
 
@@ -157,6 +162,13 @@ export default function GradeCalculator() {
     const next = structuredClone(categories);
     next[catIdx].items[itemIdx].name = name;
     setCategories(next);
+  }
+
+  function resetToDefaults() {
+    setCategories(structuredClone(DEFAULT_CATEGORIES));
+    setCollapsed({});
+    localStorage.removeItem(STORAGE_KEY);
+    sileo.success({ title: "Restablecido", description: "Valores por defecto restaurados" });
   }
 
   function addCategory() {
@@ -266,7 +278,7 @@ export default function GradeCalculator() {
         for (const item of cat.items) {
           totalItems++;
           if (item.score !== null && item.score !== "" && item.maxScore > 0) {
-            totalWeighted += (item.score / item.maxScore) * item.weight;
+            totalWeighted += Math.min(item.score / item.maxScore, 1) * item.weight;
             totalWeight += item.weight;
             filledItems++;
           } else {
@@ -444,14 +456,28 @@ export default function GradeCalculator() {
         </DragOverlay>
       </DndContext>
 
-      {/* Add section */}
-      <div className="flex justify-center">
+      {/* Add section + Reset */}
+      <div className="flex items-center justify-center gap-4">
         <button
           onClick={addCategory}
           className="inline-flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 px-6 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-indigo-300 hover:text-indigo-500"
         >
           + Agregar sección
         </button>
+        <ConfirmDialog
+          title="Restablecer valores"
+          description="Se van a eliminar todos tus datos actuales y se restaurarán los valores por defecto."
+          confirmLabel="Restablecer"
+          variant="default"
+          onConfirm={resetToDefaults}
+          trigger={
+            <button
+              className="rounded-lg px-4 py-3 text-sm font-semibold text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            >
+              Restablecer
+            </button>
+          }
+        />
       </div>
 
       {/* Footer */}
@@ -494,7 +520,7 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
 
   const contribution =
     item.score !== null && item.score !== "" && item.maxScore > 0
-      ? (item.score / item.maxScore) * item.weight
+      ? Math.min(item.score / item.maxScore, 1) * item.weight
       : null;
 
   return (
@@ -524,6 +550,7 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         type="number"
         step="any"
         min="0"
+        max={item.maxScore}
         placeholder="–"
         value={item.score ?? ""}
         onChange={(e) => onUpdateScore(catIdx, itemIdx, e.target.value)}
