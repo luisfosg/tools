@@ -1,5 +1,19 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Toaster, sileo } from "sileo";
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import ConfirmDialog from "./ConfirmDialog.tsx";
 
 const STORAGE_KEY = "noteffy-data";
@@ -66,6 +80,17 @@ function getClassification(pct) {
   if (pct >= 60) return "Deficiente";
   return "Reprobado";
 }
+
+/* ── dnd-kit ID helpers ── */
+const sectionId = (idx) => `section-${idx}`;
+const itemId = (catIdx, itemIdx) => `section-${catIdx}-item-${itemIdx}`;
+const isSectionId = (id) => String(id).startsWith("section-") && !String(id).includes("-item-");
+const isItemId = (id) => String(id).includes("-item-");
+const parseSectionId = (id) => parseInt(String(id).split("-")[1], 10);
+const parseItemId = (id) => {
+  const p = String(id).split("-");
+  return [parseInt(p[1], 10), parseInt(p[3], 10)];
+};
 
 export default function GradeCalculator() {
   const saved = loadFromStorage();
@@ -164,6 +189,72 @@ export default function GradeCalculator() {
     setCollapsed((prev) => ({ ...prev, [catIdx]: !prev[catIdx] }));
   }
 
+  /* ── dnd-kit ── */
+  const [activeId, setActiveId] = useState(null);
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+  );
+
+  function handleDragStart(event) {
+    setActiveId(event.active.id);
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) {
+      setActiveId(null);
+      return;
+    }
+
+    const aId = String(active.id);
+    const oId = String(over.id);
+
+    setCategories((prev) => {
+      /* Section reorder */
+      if (isSectionId(aId) && isSectionId(oId)) {
+        const oldIdx = parseSectionId(aId);
+        const newIdx = parseSectionId(oId);
+        if (oldIdx === newIdx) return prev;
+        return arrayMove(prev, oldIdx, newIdx);
+      }
+
+      /* Item move / reorder */
+      if (isItemId(aId)) {
+        const [aCatIdx, aItemIdx] = parseItemId(aId);
+
+        let oCatIdx, oItemIdx;
+        if (isItemId(oId)) {
+          [oCatIdx, oItemIdx] = parseItemId(oId);
+        } else if (isSectionId(oId)) {
+          oCatIdx = parseSectionId(oId);
+          oItemIdx = prev[oCatIdx]?.items.length ?? 0;
+        } else {
+          return prev;
+        }
+
+        if (aCatIdx === undefined || oCatIdx === undefined) return prev;
+
+        /* Same section — use arrayMove which handles index adjustment */
+        if (aCatIdx === oCatIdx) {
+          const next = structuredClone(prev);
+          next[aCatIdx].items = arrayMove(next[aCatIdx].items, aItemIdx, oItemIdx);
+          return next;
+        }
+
+        /* Cross-section move */
+        const next = structuredClone(prev);
+        const [item] = next[aCatIdx].items.splice(aItemIdx, 1);
+        if (!item) return prev;
+        next[oCatIdx].items.splice(oItemIdx, 0, item);
+        return next;
+      }
+
+      return prev;
+    });
+
+    setActiveId(null);
+  }
+
   const { totalWeighted, totalWeight, percentage, filledItems, totalItems } =
     useMemo(() => {
       let totalWeighted = 0;
@@ -244,154 +335,114 @@ export default function GradeCalculator() {
       </section>
 
       {/* Categories */}
-      {categories.map((cat, catIdx) => (
-        <section
-          key={catIdx}
-          className="overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100"
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <SortableContext
+          items={categories.map((_, i) => sectionId(i))}
+          strategy={verticalListSortingStrategy}
         >
-          {/* Category header */}
-          <div className="flex w-full items-center justify-between gap-3 px-6 py-3 transition-colors hover:bg-gray-50">
-            <button
-              onClick={() => toggleCollapse(catIdx)}
-              className="flex shrink-0 items-center gap-3 text-left"
-            >
-              <span
-                className={`text-xl transition-transform ${collapsed[catIdx] ? "-rotate-90" : ""}`}
-              >
-                ▼
-              </span>
-              <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
-                {cat.items.length}
-              </span>
-            </button>
-            <input
-              type="text"
-              value={cat.name}
-              onChange={(e) => updateCategoryName(catIdx, e.target.value)}
-              className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-bold text-gray-800 transition-colors hover:border-gray-200 focus:border-indigo-400 focus:bg-white focus:outline-none"
-            />
-            <div className="flex shrink-0 items-center gap-1">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  addItem(catIdx);
-                }}
-                className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
-              >
-                + Añadir
-              </button>
-              <ConfirmDialog
-                title="Eliminar sección"
-                description={`¿Eliminar la sección "${cat.name}" y todos sus ítems?`}
-                confirmLabel="Eliminar"
-                onConfirm={() => removeCategory(catIdx)}
-                trigger={
+          {categories.map((cat, catIdx) => (
+            <SortableSection key={sectionId(catIdx)} id={sectionId(catIdx)}>
+              {/* Category header */}
+              <div className="flex w-full items-center justify-between gap-3 px-6 py-3 transition-colors hover:bg-gray-50">
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <GripIcon />
                   <button
-                    className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
-                    title="Eliminar sección"
+                    onClick={() => toggleCollapse(catIdx)}
+                    className="flex items-center gap-1.5 text-left"
                   >
-                    ✕
+                    <span
+                      className={`text-xl transition-transform ${collapsed[catIdx] ? "-rotate-90" : ""}`}
+                    >
+                      ▼
+                    </span>
+                    <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+                      {cat.items.length}
+                    </span>
                   </button>
-                }
-              />
-            </div>
-          </div>
-
-          {/* Items */}
-          {!collapsed[catIdx] && (
-            <div className="divide-y divide-gray-100 border-t border-gray-100">
-              {/* Header row */}
-              <div className="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 md:flex">
-                <span className="flex-1">Ítem</span>
-                <span className="w-16 text-center">Nota</span>
-                <span className="w-16 text-center">Máx</span>
-                <span className="w-20 text-center">Peso</span>
-                <span className="w-20 text-center">Aporte</span>
-                <span className="w-8" />
+                </div>
+                <input
+                  type="text"
+                  value={cat.name}
+                  onChange={(e) => updateCategoryName(catIdx, e.target.value)}
+                  className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-bold text-gray-800 transition-colors hover:border-gray-200 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                />
+                <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addItem(catIdx);
+                    }}
+                    className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
+                  >
+                    + Añadir
+                  </button>
+                  <ConfirmDialog
+                    title="Eliminar sección"
+                    description={`¿Eliminar la sección "${cat.name}" y todos sus ítems?`}
+                    confirmLabel="Eliminar"
+                    onConfirm={() => removeCategory(catIdx)}
+                    trigger={
+                      <button
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+                        title="Eliminar sección"
+                      >
+                        ✕
+                      </button>
+                    }
+                  />
+                </div>
               </div>
 
-              {cat.items.map((item, itemIdx) => {
-                const contribution =
-                  item.score !== null && item.score !== "" && item.maxScore > 0
-                    ? (item.score / item.maxScore) * item.weight
-                    : null;
-
-                return (
-                  <div
-                    key={itemIdx}
-                    className="flex flex-col gap-2 px-6 py-3 md:flex-row md:items-center md:gap-4"
-                  >
-                    {/* Name */}
-                    <input
-                      type="text"
-                      value={item.name}
-                      onChange={(e) =>
-                        updateItemName(catIdx, itemIdx, e.target.value)
-                      }
-                      className="flex-1 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
-                    />
-
-                    {/* Score */}
-                    <input
-                      type="number"
-                      step="any"
-                      min="0"
-                      placeholder="–"
-                      value={item.score ?? ""}
-                      onChange={(e) =>
-                        updateScore(catIdx, itemIdx, e.target.value)
-                      }
-                      className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
-                    />
-
-                    <span className="hidden text-gray-300 md:inline">/</span>
-
-                    {/* Max score */}
-                    <input
-                      type="number"
-                      step="any"
-                      min="0"
-                      value={item.maxScore}
-                      onChange={(e) =>
-                        updateMaxScore(catIdx, itemIdx, e.target.value)
-                      }
-                      className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
-                    />
-
-                    {/* Weight */}
-                    <input
-                      type="number"
-                      step="any"
-                      min="0"
-                      value={item.weight}
-                      onChange={(e) =>
-                        updateWeight(catIdx, itemIdx, e.target.value)
-                      }
-                      className="w-20 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
-                    />
-
-                    {/* Contribution */}
-                    <div className="w-20 text-center text-sm font-semibold text-gray-600">
-                      {contribution !== null
-                        ? contribution.toFixed(2)
-                        : "–"}
-                    </div>
-
-                    {/* Delete */}
-                    <button
-                      onClick={() => removeItem(catIdx, itemIdx)}
-                      className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
-                      title="Eliminar"
-                    >
-                      ✕
-                    </button>
+              {/* Items */}
+              {!collapsed[catIdx] && (
+                <div className="divide-y divide-gray-100 border-t border-gray-100">
+                  {/* Header row */}
+                  <div className="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 md:flex">
+                    <span className="w-6" />
+                    <span className="flex-1">Ítem</span>
+                    <span className="w-16 text-center">Nota</span>
+                    <span className="w-16 text-center">Máx</span>
+                    <span className="w-20 text-center">Peso</span>
+                    <span className="w-20 text-center">Aporte</span>
+                    <span className="w-8" />
                   </div>
-                );
-              })}
+
+                  <SortableContext
+                    items={cat.items.map((_, j) => itemId(catIdx, j))}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {cat.items.map((item, itemIdx) => (
+                      <SortableItemRow
+                        key={itemId(catIdx, itemIdx)}
+                        id={itemId(catIdx, itemIdx)}
+                        catIdx={catIdx}
+                        itemIdx={itemIdx}
+                        item={item}
+                        onUpdateScore={updateScore}
+                        onUpdateWeight={updateWeight}
+                        onUpdateMaxScore={updateMaxScore}
+                        onUpdateName={updateItemName}
+                        onRemove={removeItem}
+                      />
+                    ))}
+                  </SortableContext>
+                </div>
+              )}
+            </SortableSection>
+          ))}
+        </SortableContext>
+
+        <DragOverlay>
+          {activeId ? (
+            <div className="rounded-2xl bg-white shadow-xl ring-1 ring-gray-200">
+              <div className="flex items-center gap-3 px-6 py-3">
+                <GripIcon />
+                <div className="h-3 w-24 rounded bg-gray-100" />
+              </div>
             </div>
-          )}
-        </section>
-      ))}
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {/* Add section */}
       <div className="flex justify-center">
@@ -408,5 +459,126 @@ export default function GradeCalculator() {
         Noteffy — calculadora de notas ponderadas en tiempo real
       </footer>
     </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Sub-components
+   ───────────────────────────────────────────── */
+
+function SortableSection({ id, children }) {
+  const { setNodeRef, transform, transition, isDragging, listeners, attributes } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+  return (
+    <section
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      style={style}
+      className={`overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 ${isDragging ? "opacity-50" : ""}`}
+    >
+      {children}
+    </section>
+  );
+}
+
+function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWeight, onUpdateMaxScore, onUpdateName, onRemove }) {
+  const { setNodeRef, setActivatorNodeRef, transform, transition, isDragging, listeners, attributes } = useSortable({ id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const contribution =
+    item.score !== null && item.score !== "" && item.maxScore > 0
+      ? (item.score / item.maxScore) * item.weight
+      : null;
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex flex-col gap-2 px-6 py-3 md:flex-row md:items-center md:gap-4 ${isDragging ? "opacity-50" : ""}`}
+    >
+      <button
+        ref={setActivatorNodeRef}
+        {...listeners}
+        {...attributes}
+        className="flex shrink-0 cursor-grab items-center text-gray-300 transition-colors hover:text-gray-500 active:cursor-grabbing"
+        title="Arrastrar"
+      >
+        <GripIcon />
+      </button>
+
+      <input
+        type="text"
+        value={item.name}
+        onChange={(e) => onUpdateName(catIdx, itemIdx, e.target.value)}
+        className="flex-1 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+      />
+
+      <input
+        type="number"
+        step="any"
+        min="0"
+        placeholder="–"
+        value={item.score ?? ""}
+        onChange={(e) => onUpdateScore(catIdx, itemIdx, e.target.value)}
+        className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+      />
+
+      <span className="hidden text-gray-300 md:inline">/</span>
+
+      <input
+        type="number"
+        step="any"
+        min="0"
+        value={item.maxScore}
+        onChange={(e) => onUpdateMaxScore(catIdx, itemIdx, e.target.value)}
+        className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+      />
+
+      <input
+        type="number"
+        step="any"
+        min="0"
+        value={item.weight}
+        onChange={(e) => onUpdateWeight(catIdx, itemIdx, e.target.value)}
+        className="w-20 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+      />
+
+      <div className="w-20 text-center text-sm font-semibold text-gray-600">
+        {contribution !== null ? contribution.toFixed(2) : "–"}
+      </div>
+
+      <button
+        onClick={() => onRemove(catIdx, itemIdx)}
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+        title="Eliminar"
+      >
+        ✕
+      </button>
+    </div>
+  );
+}
+
+function GripIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 16 16"
+      fill="currentColor"
+      className="h-4 w-4"
+    >
+      <circle cx="5" cy="3" r="1.2" />
+      <circle cx="11" cy="3" r="1.2" />
+      <circle cx="5" cy="8" r="1.2" />
+      <circle cx="11" cy="8" r="1.2" />
+      <circle cx="5" cy="13" r="1.2" />
+      <circle cx="11" cy="13" r="1.2" />
+    </svg>
   );
 }
