@@ -26,9 +26,11 @@ interface HistoryItem {
   dotsGradientMode: GradientMode;
   dotsGradientStart: string;
   dotsGradientEnd: string;
+  dotsGradientRotation: number;
   bgGradientMode: GradientMode;
   bgGradientStart: string;
   bgGradientEnd: string;
+  bgGradientRotation: number;
 }
 
 /* ───────── constants ───────── */
@@ -112,6 +114,8 @@ export default function QrGenerator() {
   const [bgGradMode, setBgGradMode] = useState<GradientMode>("none");
   const [bgGradStart, setBgGradStart] = useState("#ffffff");
   const [bgGradEnd, setBgGradEnd] = useState("#000000");
+  const [dotGradRotation, setDotGradRotation] = useState(90);
+  const [bgGradRotation, setBgGradRotation] = useState(90);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [activePreset, setActivePreset] = useState<string | null>("Dark");
 
@@ -168,8 +172,8 @@ export default function QrGenerator() {
     const qr = qrRef.current;
     if (!qr || !data.trim()) return;
 
-    const dotsGrad = buildGradient(dotGradMode, dotGradStart, dotGradEnd);
-    const bgGrad = buildGradient(bgGradMode, bgGradStart, bgGradEnd);
+    const dotsGrad = buildGradient(dotGradMode, dotGradStart, dotGradEnd, dotGradRotation);
+    const bgGrad = buildGradient(bgGradMode, bgGradStart, bgGradEnd, bgGradRotation);
 
     qr.update({
       data,
@@ -178,11 +182,11 @@ export default function QrGenerator() {
       dotsOptions: {
         color: dotsColor,
         type: dotsType,
-        ...(dotsGrad ? { gradient: dotsGrad } : {}),
+        gradient: dotsGrad,
       },
       backgroundOptions: {
         color: bgColor,
-        ...(bgGrad ? { gradient: bgGrad } : {}),
+        gradient: bgGrad,
       },
       cornersSquareOptions: { type: cornersSquareType, color: dotsColor },
       cornersDotOptions: { type: cornersDotType, color: dotsColor },
@@ -203,10 +207,12 @@ export default function QrGenerator() {
     dotGradMode,
     dotGradStart,
     dotGradEnd,
+    dotGradRotation,
     bgColor,
     bgGradMode,
     bgGradStart,
     bgGradEnd,
+    bgGradRotation,
     cornersSquareType,
     cornersDotType,
     image,
@@ -239,9 +245,11 @@ export default function QrGenerator() {
         dotsGradientMode: dotGradMode,
         dotsGradientStart: dotGradStart,
         dotsGradientEnd: dotGradEnd,
+        dotsGradientRotation: dotGradRotation,
         bgGradientMode: bgGradMode,
         bgGradientStart: bgGradStart,
         bgGradientEnd: bgGradEnd,
+        bgGradientRotation: bgGradRotation,
       };
 
       setHistory((prev) => {
@@ -319,9 +327,11 @@ export default function QrGenerator() {
     setDotGradMode(item.dotsGradientMode);
     setDotGradStart(item.dotsGradientStart);
     setDotGradEnd(item.dotsGradientEnd);
+    setDotGradRotation(item.dotsGradientRotation ?? 90);
     setBgGradMode(item.bgGradientMode);
     setBgGradStart(item.bgGradientStart);
     setBgGradEnd(item.bgGradientEnd);
+    setBgGradRotation(item.bgGradientRotation ?? 90);
     setActivePreset(null);
   }, []);
 
@@ -431,6 +441,8 @@ export default function QrGenerator() {
             onStartChange={setDotGradStart}
             end={dotGradEnd}
             onEndChange={setDotGradEnd}
+            rotation={dotGradRotation}
+            onRotationChange={setDotGradRotation}
             inp={inp}
             lbl={lbl}
           />
@@ -444,6 +456,8 @@ export default function QrGenerator() {
             onStartChange={setBgGradStart}
             end={bgGradEnd}
             onEndChange={setBgGradEnd}
+            rotation={bgGradRotation}
+            onRotationChange={setBgGradRotation}
             inp={inp}
             lbl={lbl}
           />
@@ -692,6 +706,8 @@ function GradientBlock({
   onStartChange,
   end,
   onEndChange,
+  rotation,
+  onRotationChange,
   inp,
   lbl,
 }: {
@@ -702,6 +718,8 @@ function GradientBlock({
   onStartChange: (c: string) => void;
   end: string;
   onEndChange: (c: string) => void;
+  rotation: number;
+  onRotationChange: (r: number) => void;
   inp: string;
   lbl: string;
 }) {
@@ -718,40 +736,53 @@ function GradientBlock({
         <option value="radial">Radial</option>
       </select>
       {mode !== "none" && (
-        <div className="mt-2 flex gap-2">
-          <div className="flex-1 space-y-1">
-            <label className={lbl}>Inicio</label>
-            <div className="flex gap-1">
-              <input
-                type="color"
-                value={start}
-                onChange={(e) => onStartChange(e.target.value)}
-                className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
-              />
-              <input
-                type="text"
-                value={start}
-                onChange={(e) => onStartChange(e.target.value)}
-                className={inp + " flex-1 font-mono text-xs"}
-              />
+        <div className="mt-2 space-y-3">
+          <div className="flex gap-2">
+            <div className="flex-1 space-y-1">
+              <label className={lbl}>Inicio</label>
+              <div className="flex gap-1">
+                <input
+                  type="color"
+                  value={start}
+                  onChange={(e) => onStartChange(e.target.value)}
+                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
+                />
+                <input
+                  type="text"
+                  value={start}
+                  onChange={(e) => onStartChange(e.target.value)}
+                  className={inp + " flex-1 font-mono text-xs"}
+                />
+              </div>
+            </div>
+            <div className="flex-1 space-y-1">
+              <label className={lbl}>Fin</label>
+              <div className="flex gap-1">
+                <input
+                  type="color"
+                  value={end}
+                  onChange={(e) => onEndChange(e.target.value)}
+                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
+                />
+                <input
+                  type="text"
+                  value={end}
+                  onChange={(e) => onEndChange(e.target.value)}
+                  className={inp + " flex-1 font-mono text-xs"}
+                />
+              </div>
             </div>
           </div>
-          <div className="flex-1 space-y-1">
-            <label className={lbl}>Fin</label>
-            <div className="flex gap-1">
-              <input
-                type="color"
-                value={end}
-                onChange={(e) => onEndChange(e.target.value)}
-                className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
-              />
-              <input
-                type="text"
-                value={end}
-                onChange={(e) => onEndChange(e.target.value)}
-                className={inp + " flex-1 font-mono text-xs"}
-              />
-            </div>
+          <div>
+            <label className={lbl}>Ángulo: {rotation}°</label>
+            <input
+              type="range"
+              min={0}
+              max={360}
+              value={rotation}
+              onChange={(e) => onRotationChange(Number(e.target.value))}
+              className="mt-1 w-full accent-indigo-600"
+            />
           </div>
         </div>
       )}
