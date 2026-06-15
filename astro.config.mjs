@@ -9,7 +9,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: {
-      include: ["react-dom/client"],
+      include: ["react-dom/client", "bcryptjs", "jose", "sileo"],
     },
   },
 });

@@ -39,4 +39,12 @@ export const projects: Project[] = [
     icon: "📱",
     status: "active",
   },
+  {
+    slug: "password-hash",
+    title: "Password Hash",
+    description:
+      "Generá hashes bcrypt, SHA, HMAC, PBKDF2 y JWT al instante. Soporta secretos y salt rounds configurables.",
+    icon: "🔐",
+    status: "wip",
+  },
 ];
