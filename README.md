@@ -12,6 +12,7 @@ Colección de herramientas — hosteada en **GitHub Pages**.
 | [📱 QR Generator](https://luisfosg.github.io/tools/qr-generator) | Generador de QR con personalización completa: colores, gradientes, estilos, logo y descarga |
 | [⏱️ Timestamp](https://luisfosg.github.io/tools/timestamp) | Conversor de timestamps, zonas horarias, diferencias entre fechas y formateo |
 | [🏦 IBAN Generator](https://luisfosg.github.io/tools/iban-generator) | Generador de IBANs de prueba para la UE con datos bancarios consistentes |
+| [🔐 Password Hash](https://luisfosg.github.io/tools/password-hash) | Generación de hashes bcrypt, SHA, HMAC, PBKDF2 y JWT |
 
 ## Agregar una herramienta nueva
 
