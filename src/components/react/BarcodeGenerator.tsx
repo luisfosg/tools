@@ -467,7 +467,7 @@ export default function BarcodeGenerator() {
                   key={qv.label}
                   type="button"
                   onClick={() => applyQuickValue(qv)}
-                  className="rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700"
+                  className="rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-1.5 text-xs font-semibold text-gray-600 transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300 dark:hover:border-indigo-800 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400"
                 >
                   {qv.label}: {qv.value}
                 </button>
