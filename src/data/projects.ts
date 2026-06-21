@@ -47,4 +47,12 @@ export const projects: Project[] = [
     icon: "🔐",
     status: "wip",
   },
+  {
+    slug: "barcode-generator",
+    title: "Barcode Generator",
+    description:
+      "Generá códigos de barras en múltiples formatos: CODE128, EAN-13, UPC-A, CODE39, ITF-14 y más. Descargá en PNG o SVG.",
+    icon: "▌",
+    status: "active",
+  },
 ];
