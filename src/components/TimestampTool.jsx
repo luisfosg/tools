@@ -36,7 +36,7 @@ const TABS = [
 /* ────────── Shared helpers ────────── */
 
 function inputClass(extra = "") {
-  return `rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${extra}`;
+  return `rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-700 transition-all duration-200 placeholder:text-gray-400 hover:border-gray-300 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:placeholder:text-gray-500 dark:hover:border-gray-600 dark:focus:ring-indigo-900 ${extra}`;
 }
 
 function ResultBox({ label, value, sub, copyValue }) {
@@ -54,20 +54,20 @@ function ResultBox({ label, value, sub, copyValue }) {
   };
 
   return (
-    <div className="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:border-gray-200 hover:shadow-md">
+    <div className="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition-all duration-200 hover:border-gray-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-900 dark:hover:border-gray-600">
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+          <p className="text-[11px] font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500">
             {label}
           </p>
-          <p className="text-base font-semibold leading-snug text-gray-800 break-all">
+          <p className="text-base font-semibold leading-snug text-gray-800 break-all dark:text-gray-100">
             {value}
           </p>
-          {sub && <p className="text-sm text-gray-500">{sub}</p>}
+          {sub && <p className="text-sm text-gray-500 dark:text-gray-400">{sub}</p>}
         </div>
         <button
           onClick={handleCopy}
-          className="shrink-0 rounded-lg p-1.5 text-gray-300 transition-all duration-150 hover:bg-indigo-50 hover:text-indigo-500 active:scale-90"
+          className="shrink-0 rounded-lg p-1.5 text-gray-300 transition-all duration-150 hover:bg-indigo-50 hover:text-indigo-500 active:scale-90 dark:text-gray-500 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400"
           title="Copiar"
         >
           {justCopied ? (
@@ -101,7 +101,7 @@ function selectTZ({ value, onChange, label }) {
         ))}
       </select>
       <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-        <svg className="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <svg className="h-4 w-4 text-gray-400 dark:text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
           <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clipRule="evenodd" />
         </svg>
       </div>
@@ -145,13 +145,13 @@ function UnixTab() {
   return (
     <div className="space-y-6">
       {/* Mode toggle */}
-      <div className="flex items-center gap-2 rounded-xl bg-gray-50 p-1">
+      <div className="flex items-center gap-2 rounded-xl bg-gray-50 p-1 dark:bg-gray-800/50">
         <button
           onClick={() => setMode("ts")}
           className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
             mode === "ts"
-              ? "bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200 dark:bg-gray-700 dark:text-indigo-400 dark:ring-gray-600"
+              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           }`}
         >
           Timestamp a fecha
@@ -160,8 +160,8 @@ function UnixTab() {
           onClick={() => setMode("date")}
           className={`rounded-lg px-4 py-1.5 text-sm font-medium transition-all duration-200 ${
             mode === "date"
-              ? "bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-white text-indigo-600 shadow-sm ring-1 ring-gray-200 dark:bg-gray-700 dark:text-indigo-400 dark:ring-gray-600"
+              : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
           }`}
         >
           Fecha a timestamp
@@ -170,7 +170,7 @@ function UnixTab() {
 
       {mode === "ts" ? (
         <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Unix timestamp</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Unix timestamp</label>
           <div className="flex flex-wrap items-center gap-4">
             <input
               type="number"
@@ -179,12 +179,12 @@ function UnixTab() {
               placeholder="1735689600"
               className={inputClass("w-64")}
             />
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600 select-none">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600 select-none dark:text-gray-300">
               <input
                 type="checkbox"
                 checked={inSeconds}
                 onChange={() => setInSeconds(!inSeconds)}
-                className="h-4 w-4 rounded border-gray-300 text-indigo-600 transition-colors focus:ring-2 focus:ring-indigo-100 focus:ring-offset-0"
+                className="h-4 w-4 rounded border-gray-300 text-indigo-600 transition-colors focus:ring-2 focus:ring-indigo-100 focus:ring-offset-0 dark:border-gray-600 dark:text-indigo-400 dark:focus:ring-indigo-900"
               />
               Segundos
             </label>
@@ -192,7 +192,7 @@ function UnixTab() {
         </div>
       ) : (
         <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Fecha y hora</label>
           <input
             type="datetime-local"
             value={pickerDate}
@@ -250,7 +250,7 @@ function TZTab() {
   return (
     <div className="space-y-6">
       <div className="space-y-3">
-        <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Fecha y hora</label>
         <input
           type="datetime-local"
           value={datetime}
@@ -261,14 +261,14 @@ function TZTab() {
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Desde zona</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Desde zona</label>
           {selectTZ({ value: fromTZ, onChange: setFromTZ, label: "Desde" })}
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 dark:text-gray-500">
             Detectado: {Intl.DateTimeFormat().resolvedOptions().timeZone}
           </p>
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Hacia zona</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Hacia zona</label>
           {selectTZ({ value: toTZ, onChange: setToTZ, label: "Hacia" })}
         </div>
       </div>
@@ -318,7 +318,7 @@ function DiffTab() {
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Desde</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Desde</label>
           <input
             type="date"
             value={from}
@@ -327,7 +327,7 @@ function DiffTab() {
           />
         </div>
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Hasta</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Hasta</label>
           <input
             type="date"
             value={to}
@@ -339,11 +339,11 @@ function DiffTab() {
 
       {diff && (
         <>
-          <div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-6">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-indigo-400">
+          <div className="rounded-xl border border-indigo-100 bg-gradient-to-br from-indigo-50 to-white p-6 dark:border-indigo-900 dark:from-indigo-950 dark:to-gray-900">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-indigo-400 dark:text-indigo-300">
               Diferencia
             </p>
-            <p className="mt-1 text-2xl font-bold tracking-tight text-gray-900">
+            <p className="mt-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
               {diff.years > 0 && `${diff.years}a `}
               {diff.months > 0 && `${diff.months}m `}
               {diff.days > 0 && `${diff.days}d `}
@@ -394,7 +394,7 @@ function FormatTab() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Fecha y hora</label>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-200">Fecha y hora</label>
         <input
           type="datetime-local"
           value={datetime}
@@ -452,35 +452,35 @@ export default function TimestampTool() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8 sm:py-12">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
 
       {/* ── Header ── */}
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
           Timestamp
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Conversor de timestamps, zonas horarias, diferencias y formatos
         </p>
       </header>
 
       {/* ── Tool Card ── */}
-      <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+      <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
         {/* Tab Navigation */}
-        <nav className="flex border-b border-gray-100 px-1 sm:px-3">
+        <nav className="flex border-b border-gray-100 px-1 sm:px-3 dark:border-gray-800">
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`relative px-4 py-3 text-sm font-medium transition-colors duration-200 sm:px-5 ${
                 activeTab === tab.id
-                  ? "text-indigo-600"
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "text-indigo-600 dark:text-indigo-400"
+                  : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
               }`}
             >
               {tab.label}
               {activeTab === tab.id && (
-                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-indigo-600 sm:inset-x-3" />
+                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-indigo-600 sm:inset-x-3 dark:bg-indigo-400" />
               )}
             </button>
           ))}
@@ -496,7 +496,7 @@ export default function TimestampTool() {
       </section>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         Timestamp — gestiona horas y fechas en un solo lugar
       </footer>
     </div>

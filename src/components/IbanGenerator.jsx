@@ -127,25 +127,25 @@ export default function IbanGenerator() {
 
   /* ───────── style helpers ───────── */
   const inp =
-    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none";
+    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:border-gray-600 dark:focus:bg-gray-800";
   const sel = inp + " w-full sm:w-auto";
-  const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400";
+  const lbl =     "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
           IBAN Generator
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Generador de IBANs de prueba con datos bancarios consistentes para la UE
         </p>
       </header>
 
       {/* Controls */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
           {/* Country */}
           <div className="space-y-1">
@@ -196,7 +196,7 @@ export default function IbanGenerator() {
           </button>
           <button
             onClick={handleRandom}
-            className="rounded-lg border border-indigo-200 bg-white px-6 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50"
+            className="rounded-lg border border-indigo-200 bg-white px-6 py-2 text-sm font-semibold text-indigo-600 shadow-sm transition-colors hover:bg-indigo-50 dark:border-indigo-800 dark:bg-gray-900 dark:text-indigo-400 dark:hover:bg-indigo-900/30"
           >
             🎲 Random cualquier país
           </button>
@@ -205,11 +205,11 @@ export default function IbanGenerator() {
 
       {/* Result */}
       {result && (
-        <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+        <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
           {/* IBAN display */}
           <div className="text-center">
             <p className={lbl}>IBAN</p>
-            <p className="mt-1 select-all text-2xl font-bold tracking-widest text-indigo-600">
+            <p className="mt-1 select-all text-2xl font-bold tracking-widest text-indigo-600 dark:text-indigo-400">
               {result.formattedIban}
             </p>
             <div className="mt-2 flex justify-center gap-2">
@@ -221,12 +221,12 @@ export default function IbanGenerator() {
               </button>
               <button
                 onClick={() => copy(result.rawIban, "IBAN (sin espacios)")}
-                className="rounded-lg border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
               >
                 📋 Sin espacios
               </button>
             </div>
-            <p className="mt-1 text-xs text-gray-400">
+            <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
               {result.country} · {result.currency}
             </p>
           </div>
@@ -245,7 +245,7 @@ export default function IbanGenerator() {
           <div className="mt-5 flex flex-wrap justify-center gap-3">
             <button
               onClick={() => copy(JSON.stringify(result, null, 2), "JSON")}
-              className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+              className="rounded-lg border border-gray-200 bg-white px-5 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
             >
               💾 Copiar JSON
             </button>
@@ -255,23 +255,23 @@ export default function IbanGenerator() {
 
       {/* History */}
       {history.length > 0 && (
-        <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
-          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-400">
+        <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
+          <h2 className="mb-3 text-sm font-bold uppercase tracking-wide text-gray-400 dark:text-gray-500">
             Historial
           </h2>
           <div className="space-y-2">
             {history.map((h, i) => (
               <div
                 key={h.rawIban + i}
-                className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50"
+                className="flex cursor-pointer items-center justify-between rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50 dark:bg-gray-800/50 dark:hover:bg-indigo-900/30"
                 onClick={() => copy(h.formattedIban, "IBAN historial")}
                 title="Copiar IBAN"
               >
                 <div>
-                  <p className="font-mono text-sm font-semibold text-gray-800">
+                  <p className="font-mono text-sm font-semibold text-gray-800 dark:text-gray-100">
                     {h.formattedIban}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {h.country} · {h.bankName}
                   </p>
                 </div>
@@ -283,7 +283,7 @@ export default function IbanGenerator() {
       )}
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         IBAN Generator — datos de prueba sintéticos, no uses para transacciones reales
       </footer>
     </div>
@@ -294,20 +294,20 @@ export default function IbanGenerator() {
 
 function ResultBox({ label, value, onCopy }) {
   return (
-    <div className="group relative rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
+    <div className="group relative rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100 dark:bg-indigo-950/30 dark:ring-indigo-900">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
             {label}
           </p>
-          <p className="mt-1 select-all break-all text-sm font-semibold text-gray-800">
+          <p className="mt-1 select-all break-all text-sm font-semibold text-gray-800 dark:text-gray-100">
             {value ?? "—"}
           </p>
         </div>
         {value && onCopy && (
           <button
             onClick={() => onCopy(value)}
-            className="shrink-0 rounded-md p-1.5 text-gray-400 opacity-0 transition-all hover:bg-indigo-100 hover:text-indigo-600 group-hover:opacity-100"
+            className="shrink-0 rounded-md p-1.5 text-gray-400 opacity-0 transition-all hover:bg-indigo-100 hover:text-indigo-600 group-hover:opacity-100 dark:text-gray-500 dark:hover:bg-indigo-900/40 dark:hover:text-indigo-400"
             title={`Copiar ${label}`}
           >
             <svg

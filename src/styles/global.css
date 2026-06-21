@@ -1,1 +1,24 @@
 @import "tailwindcss";
+
+/* Dark mode híbrido: respeta prefers-color-scheme + toggle manual con clase .dark */
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  * {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Sileo toast description text in dark mode */
+  .dark [data-sileo-description] {
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+
+  /* Sileo toast SVG shape fill in dark mode:
+     Sileo's theme="system" only checks prefers-color-scheme, not the .dark class.
+     Our manual toggle adds .dark but doesn't change the media query, so Sileo
+     still uses the light-mode fill (#1a1a1a) on a dark page. We override it. */
+  .dark [data-sileo-pill],
+  .dark [data-sileo-body] {
+    fill: #374151 !important;
+  }
+}

@@ -37,7 +37,7 @@ interface HistoryItem {
 
 const PRESETS: { name: string; dots: string; bg: string }[] = [
   { name: "Dark", dots: "#1a1a2e", bg: "#ffffff" },
-  { name: "Light", dots: "#e2e8f0", bg: "#ffffff" },
+  { name: "Light", dots: "#e2e8f0", bg: "#0a0a0a" },
   { name: "Brand", dots: "#4f46e5", bg: "#ffffff" },
   { name: "Neon", dots: "#00ff88", bg: "#0a0a0a" },
 ];
@@ -337,27 +337,27 @@ export default function QrGenerator() {
 
   /* ── style classes matching existing tools ── */
   const inp =
-    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none";
+    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:border-gray-600 dark:focus:bg-gray-800";
   const sel = inp + " w-full appearance-none";
-  const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400";
+  const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
 
   /* ── render ── */
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
 
       {/* ── Header ── */}
       <header className="text-center">
         <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
           QR Code Generator
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Generá códigos QR personalizados con colores, estilos y logo
         </p>
       </header>
 
       {/* ── Input ── */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <input
           type="text"
           value={data}
@@ -368,7 +368,7 @@ export default function QrGenerator() {
       </section>
 
       {/* ── Presets ── */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <p className={cx(lbl, "mb-3")}>Presets de color</p>
         <div className="flex flex-wrap gap-3">
           {PRESETS.map((p) => (
@@ -380,7 +380,7 @@ export default function QrGenerator() {
                 "flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-all",
                 activePreset === p.name
                   ? "ring-2 ring-indigo-500 ring-offset-2"
-                  : "ring-1 ring-gray-200 hover:ring-indigo-300",
+                  : "ring-1 ring-gray-200 hover:ring-indigo-300 dark:ring-gray-600 dark:hover:ring-indigo-400",
               )}
             >
               <span className="flex -space-x-1">
@@ -402,7 +402,7 @@ export default function QrGenerator() {
       {/* ── Main: Customize (left) + Preview (right) ── */}
       <div className="flex flex-col gap-6 md:flex-row">
         {/* ── Customization panel ── */}
-        <section className="min-w-0 flex-1 space-y-5 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+        <section className="min-w-0 flex-1 space-y-5 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
           <h2 className={lbl}>Personalización</h2>
 
           {/* Dots color */}
@@ -471,7 +471,7 @@ export default function QrGenerator() {
           {/* Error correction level */}
           <div className="space-y-1.5">
             <label className={lbl}>Corrección de error</label>
-            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+            <div className="flex gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800">
               {EC_LEVELS.map((lv) => (
                 <button
                   key={lv}
@@ -480,8 +480,8 @@ export default function QrGenerator() {
                   className={cx(
                     "flex-1 rounded-md px-3 py-1.5 text-xs font-bold transition-all",
                     ecLevel === lv
-                      ? "bg-white text-indigo-600 shadow-sm"
-                      : "text-gray-500 hover:text-gray-800",
+                      ? "bg-white text-indigo-600 shadow-sm dark:bg-gray-900 dark:text-indigo-400"
+                      : "text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200",
                   )}
                 >
                   {lv}
@@ -522,9 +522,9 @@ export default function QrGenerator() {
                 Subir logo
               </button>
             ) : (
-              <div className="space-y-3 rounded-lg bg-gray-50 p-3">
+              <div className="space-y-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800/50">
                 <div className="flex items-center justify-between">
-                  <span className="truncate text-sm text-gray-600">Logo cargado</span>
+                  <span className="truncate text-sm text-gray-600 dark:text-gray-400">Logo cargado</span>
                   <button
                     type="button"
                     onClick={removeImage}
@@ -562,17 +562,17 @@ export default function QrGenerator() {
 
         {/* ── QR Preview ── */}
         <section className="flex w-full flex-col self-center md:w-80 md:self-start">
-          <div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+          <div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
             {!data.trim() ? (
-              <div className="flex h-[280px] w-[280px] items-center justify-center rounded-xl bg-gray-50">
-                <p className="px-4 text-center text-sm text-gray-400">
+              <div className="flex h-[280px] w-[280px] items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                <p className="px-4 text-center text-sm text-gray-400 dark:text-gray-500">
                   Ingresá texto o URL para generar
                 </p>
               </div>
             ) : (
               <>
                 <div ref={containerRef} className="flex items-center justify-center" />
-                <p className="mt-3 max-w-[260px] truncate text-center text-xs text-gray-400">
+                <p className="mt-3 max-w-[260px] truncate text-center text-xs text-gray-400 dark:text-gray-500">
                   {data}
                 </p>
               </>
@@ -595,20 +595,20 @@ export default function QrGenerator() {
 
           {/* ── History ── */}
           {history.length > 0 && (
-            <div className="mt-4 rounded-2xl bg-white p-5 shadow-lg ring-1 ring-gray-100">
+            <div className="mt-4 rounded-2xl bg-white p-5 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
               <h2 className={cx(lbl, "mb-3")}>Historial</h2>
               <div className="space-y-2">
                 {history.map((item, i) => (
                   <div
                     key={item.data + i}
                     onClick={() => restoreHistory(item)}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50 dark:bg-gray-800/50 dark:hover:bg-indigo-900/30"
                   >
                     <span
                       className="inline-block h-4 w-4 shrink-0 rounded"
                       style={{ backgroundColor: item.dotsColor }}
                     />
-                    <p className="min-w-0 truncate text-sm font-medium text-gray-700">
+                    <p className="min-w-0 truncate text-sm font-medium text-gray-700 dark:text-gray-200">
                       {item.data}
                     </p>
                   </div>
@@ -620,7 +620,7 @@ export default function QrGenerator() {
       </div>
 
       {/* ── Footer ── */}
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         QR Code Generator — qr-code-styling
       </footer>
     </div>
@@ -652,7 +652,7 @@ function ColorField({
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-12 cursor-pointer rounded-lg border border-gray-200 bg-white p-0.5"
+          className="h-9 w-12 cursor-pointer rounded-lg border border-gray-200 bg-white p-0.5 dark:border-gray-700 dark:bg-gray-800"
         />
         <input
           type="text"
@@ -745,7 +745,7 @@ function GradientBlock({
                   type="color"
                   value={start}
                   onChange={(e) => onStartChange(e.target.value)}
-                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
+                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5 dark:border-gray-700 dark:bg-gray-800"
                 />
                 <input
                   type="text"
@@ -762,7 +762,7 @@ function GradientBlock({
                   type="color"
                   value={end}
                   onChange={(e) => onEndChange(e.target.value)}
-                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5"
+                  className="h-8 w-10 cursor-pointer rounded border border-gray-200 bg-white p-0.5 dark:border-gray-700 dark:bg-gray-800"
                 />
                 <input
                   type="text"
@@ -801,7 +801,7 @@ function ActionButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-xs transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-[0.96]"
+      className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-xs transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-[0.96] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-indigo-400 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-400"
     >
       {children}
     </button>

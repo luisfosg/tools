@@ -57,7 +57,7 @@ const FORMATS: {
 
 const PRESETS: { name: string; line: string; bg: string }[] = [
   { name: "Dark", line: "#1a1a2e", bg: "#ffffff" },
-  { name: "Light", line: "#94a3b8", bg: "#ffffff" },
+  { name: "Light", line: "#94a3b8", bg: "#0a0a0a" },
   { name: "Brand", line: "#4f46e5", bg: "#ffffff" },
   { name: "Neon", line: "#00ff88", bg: "#0a0a0a" },
 ];
@@ -359,27 +359,27 @@ export default function BarcodeGenerator() {
 
   /* ── style classes (matching existing tools) ── */
   const inp =
-    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none";
+    "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-300 dark:hover:border-gray-600 dark:focus:border-indigo-400 dark:focus:bg-gray-800";
   const sel = inp + " w-full appearance-none";
-  const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400";
+  const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
 
   /* ── render ── */
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
 
       {/* ── Header ── */}
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
           Barcode Generator
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Generá códigos de barras con múltiples formatos y personalización
         </p>
       </header>
 
       {/* ── Input + Format ── */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="min-w-0 flex-1">
             <label className={lbl}>Valor a codificar</label>
@@ -436,7 +436,7 @@ export default function BarcodeGenerator() {
       </section>
 
       {/* ── Quick test values ── */}
-      <section className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <button
           type="button"
           onClick={() => setShowQuickValues(!showQuickValues)}
@@ -478,7 +478,7 @@ export default function BarcodeGenerator() {
       </section>
 
       {/* ── Presets ── */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         <p className={cx(lbl, "mb-3")}>Presets de color</p>
         <div className="flex flex-wrap gap-3">
           {PRESETS.map((p) => (
@@ -512,7 +512,7 @@ export default function BarcodeGenerator() {
       {/* ── Main: Customize (left) + Preview (right) ── */}
       <div className="flex flex-col gap-6 md:flex-row">
         {/* ── Customization panel ── */}
-        <section className="min-w-0 flex-1 space-y-5 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+        <section className="min-w-0 flex-1 space-y-5 rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
           <h2 className={lbl}>Personalización</h2>
 
           {/* Height */}
@@ -658,10 +658,10 @@ export default function BarcodeGenerator() {
 
         {/* ── Preview ── */}
         <section className="flex w-full flex-col self-center md:w-80 md:self-start">
-          <div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+          <div className="flex flex-col items-center rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
             {!text.trim() || !isValid ? (
-              <div className="flex h-[180px] w-full items-center justify-center rounded-xl bg-gray-50">
-                <p className="px-4 text-center text-sm text-gray-400">
+              <div className="flex h-[180px] w-full items-center justify-center rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                <p className="px-4 text-center text-sm text-gray-400 dark:text-gray-500">
                   {!text.trim()
                     ? "Ingresá un valor para generar"
                     : "El valor no es válido para este formato"}
@@ -677,7 +677,7 @@ export default function BarcodeGenerator() {
                     style={{ maxWidth: "100%" }}
                   />
                 </div>
-                <p className="mt-3 max-w-[260px] truncate text-center text-xs text-gray-400">
+                <p className="mt-3 max-w-[260px] truncate text-center text-xs text-gray-400 dark:text-gray-500">
                   {format}: {text}
                 </p>
               </>
@@ -697,24 +697,24 @@ export default function BarcodeGenerator() {
 
           {/* ── History ── */}
           {history.length > 0 && (
-            <div className="mt-4 rounded-2xl bg-white p-5 shadow-lg ring-1 ring-gray-100">
+            <div className="mt-4 rounded-2xl bg-white p-5 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
               <h2 className={cx(lbl, "mb-3")}>Historial</h2>
               <div className="space-y-2">
                 {history.map((item, i) => (
                   <div
                     key={item.text + item.format + i}
                     onClick={() => restoreHistory(item)}
-                    className="flex cursor-pointer items-center gap-3 rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50"
+                    className="flex cursor-pointer items-center gap-3 rounded-lg bg-gray-50 px-4 py-2.5 transition-colors hover:bg-indigo-50 dark:bg-gray-800/50 dark:hover:bg-indigo-900/30"
                   >
                     <span
                       className="inline-block h-4 w-4 shrink-0 rounded"
                       style={{ backgroundColor: item.lineColor }}
                     />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-medium text-gray-700">
+                      <p className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">
                         {item.text}
                       </p>
-                      <p className="text-xs text-gray-400">{item.format}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{item.format}</p>
                     </div>
                   </div>
                 ))}
@@ -725,7 +725,7 @@ export default function BarcodeGenerator() {
       </div>
 
       {/* ── Footer ── */}
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         Barcode Generator — jsbarcode
       </footer>
     </div>
@@ -757,7 +757,7 @@ function ColorField({
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="h-9 w-12 cursor-pointer rounded-lg border border-gray-200 bg-white p-0.5"
+            className="h-9 w-12 cursor-pointer rounded-lg border border-gray-200 bg-white p-0.5 dark:border-gray-700 dark:bg-gray-800"
         />
         <input
           type="text"
@@ -849,7 +849,7 @@ function ActionButton({
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-xs transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-[0.96]"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-xs font-semibold text-gray-600 shadow-xs transition-all hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 active:scale-[0.96] dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-indigo-500 dark:hover:bg-indigo-900/30 dark:hover:text-indigo-300"
     >
       {children}
     </button>

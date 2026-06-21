@@ -108,7 +108,6 @@ export default function GradeCalculator() {
         STORAGE_KEY,
         JSON.stringify({ categories, collapsed }),
       );
-      sileo.success({ title: "Guardado" });
     }, 600);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
@@ -294,49 +293,49 @@ export default function GradeCalculator() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
 
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
           Noteffy
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Calculadora de notas por ponderación
         </p>
       </header>
 
       {/* Summary Card */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-lg ring-1 ring-gray-100 dark:ring-gray-800">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div className="text-center sm:text-left">
-            <p className="text-sm font-medium uppercase tracking-wide text-gray-400">
+            <p className="text-sm font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
               Nota ponderada
             </p>
             <p className={`text-6xl font-black ${getGradeColor(percentage)}`}>
               {percentage.toFixed(1)}
-              <span className="text-2xl font-normal text-gray-400">%</span>
+              <span className="text-2xl font-normal text-gray-400 dark:text-gray-500">%</span>
             </p>
-            <p className="mt-1 text-lg font-semibold text-gray-600">
+            <p className="mt-1 text-lg font-semibold text-gray-600 dark:text-gray-400">
               {getClassification(percentage)}
             </p>
           </div>
 
           <div className="flex flex-col items-end gap-1">
-            <div className="flex items-baseline gap-3 text-sm text-gray-400">
+            <div className="flex items-baseline gap-3 text-sm text-gray-400 dark:text-gray-500">
               <span>
-                <span className="font-semibold text-gray-700">
+                <span className="font-semibold text-gray-700 dark:text-gray-200">
                   {totalWeighted.toFixed(2)}
                 </span>{" "}
                 / {totalWeight.toFixed(2)} pts
               </span>
               <span>
-                <span className="font-semibold text-gray-700">{filledItems}</span> /{" "}
+                <span className="font-semibold text-gray-700 dark:text-gray-200">{filledItems}</span> /{" "}
                 {totalItems} ítems
               </span>
             </div>
             {/* Progress bar */}
-            <div className="h-3 w-56 overflow-hidden rounded-full bg-gray-100">
+            <div className="h-3 w-56 overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${getGradeBg(percentage)}`}
                 style={{ width: `${Math.min(percentage, 100)}%` }}
@@ -355,7 +354,7 @@ export default function GradeCalculator() {
           {categories.map((cat, catIdx) => (
             <SortableSection key={sectionId(catIdx)} id={sectionId(catIdx)}>
               {/* Category header */}
-              <div className="flex w-full items-center justify-between gap-3 px-6 py-3 transition-colors hover:bg-gray-50">
+              <div className="flex w-full items-center justify-between gap-3 px-6 py-3 transition-colors hover:bg-gray-50 dark:hover:bg-gray-800/50">
                 <div className="flex shrink-0 items-center gap-1.5">
                   <GripIcon />
                   <button
@@ -367,7 +366,7 @@ export default function GradeCalculator() {
                     >
                       ▼
                     </span>
-                    <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-600">
+                    <span className="rounded-full bg-indigo-100 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
                       {cat.items.length}
                     </span>
                   </button>
@@ -376,7 +375,7 @@ export default function GradeCalculator() {
                   type="text"
                   value={cat.name}
                   onChange={(e) => updateCategoryName(catIdx, e.target.value)}
-                  className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-bold text-gray-800 transition-colors hover:border-gray-200 focus:border-indigo-400 focus:bg-white focus:outline-none"
+                  className="min-w-0 flex-1 rounded-lg border border-transparent bg-transparent px-1 py-1 text-lg font-bold text-gray-800 dark:text-gray-100 transition-colors hover:border-gray-200 dark:hover:border-gray-700 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
                 />
                 <div className="flex shrink-0 items-center gap-1">
                   <button
@@ -384,7 +383,7 @@ export default function GradeCalculator() {
                       e.stopPropagation();
                       addItem(catIdx);
                     }}
-                    className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 transition-colors hover:bg-indigo-50"
+                    className="rounded-lg px-3 py-1 text-sm font-medium text-indigo-600 dark:text-indigo-400 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-900/30"
                   >
                     + Añadir
                   </button>
@@ -395,7 +394,7 @@ export default function GradeCalculator() {
                     onConfirm={() => removeCategory(catIdx)}
                     trigger={
                       <button
-                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
                         title="Eliminar sección"
                       >
                         ✕
@@ -407,9 +406,9 @@ export default function GradeCalculator() {
 
               {/* Items */}
               {!collapsed[catIdx] && (
-                <div className="divide-y divide-gray-100 border-t border-gray-100">
+                <div className="divide-y divide-gray-100 dark:divide-gray-800 border-t border-gray-100 dark:border-gray-800">
                   {/* Header row */}
-                  <div className="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 md:flex">
+                  <div className="hidden items-center gap-4 px-6 py-2 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 md:flex">
                     <span className="w-6" />
                     <span className="flex-1">Ítem</span>
                     <span className="w-16 text-center">Nota</span>
@@ -446,10 +445,10 @@ export default function GradeCalculator() {
 
         <DragOverlay>
           {activeId ? (
-            <div className="rounded-2xl bg-white shadow-xl ring-1 ring-gray-200">
+            <div className="rounded-2xl bg-white dark:bg-gray-900 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700">
               <div className="flex items-center gap-3 px-6 py-3">
                 <GripIcon />
-                <div className="h-3 w-24 rounded bg-gray-100" />
+                <div className="h-3 w-24 rounded bg-gray-100 dark:bg-gray-800" />
               </div>
             </div>
           ) : null}
@@ -460,7 +459,7 @@ export default function GradeCalculator() {
       <div className="flex items-center justify-center gap-4">
         <button
           onClick={addCategory}
-          className="inline-flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 px-6 py-3 text-sm font-semibold text-gray-400 transition-colors hover:border-indigo-300 hover:text-indigo-500"
+          className="inline-flex items-center gap-2 rounded-xl border-2 border-dashed border-gray-200 dark:border-gray-700 px-6 py-3 text-sm font-semibold text-gray-400 dark:text-gray-500 transition-colors hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-500 dark:hover:text-indigo-400"
         >
           + Agregar sección
         </button>
@@ -472,7 +471,7 @@ export default function GradeCalculator() {
           onConfirm={resetToDefaults}
           trigger={
             <button
-              className="rounded-lg px-4 py-3 text-sm font-semibold text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+              className="rounded-lg px-4 py-3 text-sm font-semibold text-gray-400 dark:text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-400"
             >
               Restablecer
             </button>
@@ -481,7 +480,7 @@ export default function GradeCalculator() {
       </div>
 
       {/* Footer */}
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         Noteffy — calculadora de notas ponderadas en tiempo real
       </footer>
     </div>
@@ -504,7 +503,7 @@ function SortableSection({ id, children }) {
       {...listeners}
       {...attributes}
       style={style}
-      className={`overflow-hidden rounded-2xl bg-white shadow-lg ring-1 ring-gray-100 ${isDragging ? "opacity-50" : ""}`}
+      className={`overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-lg ring-1 ring-gray-100 dark:ring-gray-800 ${isDragging ? "opacity-50" : ""}`}
     >
       {children}
     </section>
@@ -533,7 +532,7 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         ref={setActivatorNodeRef}
         {...listeners}
         {...attributes}
-        className="flex shrink-0 cursor-grab items-center text-gray-300 transition-colors hover:text-gray-500 active:cursor-grabbing"
+        className="flex shrink-0 cursor-grab items-center text-gray-300 dark:text-gray-500 transition-colors hover:text-gray-500 dark:hover:text-gray-400 active:cursor-grabbing"
         title="Arrastrar"
       >
         <GripIcon />
@@ -543,7 +542,7 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         type="text"
         value={item.name}
         onChange={(e) => onUpdateName(catIdx, itemIdx, e.target.value)}
-        className="flex-1 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+        className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 transition-colors hover:border-gray-300 dark:hover:border-gray-600 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
       />
 
       <input
@@ -554,10 +553,10 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         placeholder="–"
         value={item.score ?? ""}
         onChange={(e) => onUpdateScore(catIdx, itemIdx, e.target.value)}
-        className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+        className="w-16 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 dark:hover:border-gray-600 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
       />
 
-      <span className="hidden text-gray-300 md:inline">/</span>
+      <span className="hidden text-gray-300 dark:text-gray-500 md:inline">/</span>
 
       <input
         type="number"
@@ -565,7 +564,7 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         min="0"
         value={item.maxScore}
         onChange={(e) => onUpdateMaxScore(catIdx, itemIdx, e.target.value)}
-        className="w-16 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+        className="w-16 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 dark:hover:border-gray-600 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
       />
 
       <input
@@ -574,16 +573,16 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         min="0"
         value={item.weight}
         onChange={(e) => onUpdateWeight(catIdx, itemIdx, e.target.value)}
-        className="w-20 rounded-lg border border-gray-200 bg-gray-50/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none"
+        className="w-20 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 dark:hover:border-gray-600 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
       />
 
-      <div className="w-20 text-center text-sm font-semibold text-gray-600">
+      <div className="w-20 text-center text-sm font-semibold text-gray-600 dark:text-gray-400">
         {contribution !== null ? contribution.toFixed(2) : "–"}
       </div>
 
       <button
         onClick={() => onRemove(catIdx, itemIdx)}
-        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 transition-colors hover:bg-red-50 hover:text-red-500"
+        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
         title="Eliminar"
       >
         ✕

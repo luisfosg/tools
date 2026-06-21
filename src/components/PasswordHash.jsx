@@ -253,9 +253,9 @@ async function verifyJwtSignature(token, secret) {
 /* ───────── common style helpers ───────── */
 
 const inp =
-  "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none";
+  "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:border-gray-600 dark:focus:bg-gray-800";
 const sel = inp + " w-full sm:w-auto";
-const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400";
+const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
 
 /* ───────── field renderer ───────── */
 
@@ -274,7 +274,7 @@ function FieldRenderer({ field, value, onChange }) {
             onChange={(e) => onChange(field.key, Number(e.target.value))}
             className="w-full accent-indigo-600"
           />
-          <span className="min-w-[2ch] text-sm font-semibold text-indigo-600">
+          <span className="min-w-[2ch] text-sm font-semibold text-indigo-600 dark:text-indigo-400">
             {value ?? field.default}
           </span>
         </div>
@@ -321,11 +321,11 @@ function FieldRenderer({ field, value, onChange }) {
 
 function ResultBox({ label, children }) {
   return (
-    <div className="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100">
-      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
+    <div className="rounded-xl bg-indigo-50/50 p-4 ring-1 ring-indigo-100 dark:bg-indigo-900/20 dark:ring-indigo-800/30">
+      <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400 dark:text-indigo-300">
         {label}
       </p>
-      <pre className="mt-1 whitespace-pre-wrap break-all font-mono text-sm text-gray-800">
+      <pre className="mt-1 whitespace-pre-wrap break-all font-mono text-sm text-gray-800 dark:text-gray-200">
         {children ?? "—"}
       </pre>
     </div>
@@ -473,8 +473,8 @@ export default function PasswordHash() {
       onClick={() => handleModeChange(tab)}
       className={`rounded-lg px-4 py-1.5 text-xs font-semibold transition-all ${
         mode === tab
-          ? "bg-white text-indigo-700 shadow-sm ring-1 ring-gray-200"
-          : "text-gray-500 hover:text-gray-700"
+          ? "bg-white text-indigo-700 shadow-sm ring-1 ring-gray-200 dark:bg-gray-800 dark:text-indigo-400 dark:ring-gray-700"
+          : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       }`}
     >
       {label}
@@ -496,7 +496,7 @@ export default function PasswordHash() {
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-400">{algo.desc}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">{algo.desc}</p>
         </div>
 
         {/* Password / Payload */}
@@ -553,7 +553,7 @@ export default function PasswordHash() {
               </option>
             ))}
           </select>
-          <p className="text-xs text-gray-400">{algo.desc}</p>
+          <p className="text-xs text-gray-400 dark:text-gray-500">{algo.desc}</p>
         </div>
 
         <div className="space-y-1">
@@ -634,21 +634,21 @@ export default function PasswordHash() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
-      <Toaster position="top-right" />
+      <Toaster position="top-right" theme="system" />
 
       {/* Header */}
       <header className="text-center">
-        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600">
+        <h1 className="text-5xl font-extrabold tracking-tight text-indigo-600 dark:text-indigo-400">
           Password Hash
         </h1>
-        <p className="mt-1 text-gray-500">
+        <p className="mt-1 text-gray-500 dark:text-gray-400">
           Generá hashes, compará, decodificá JWTs
         </p>
       </header>
 
       {/* Mode tabs */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
-        <div className="mb-4 flex justify-center gap-1 rounded-xl bg-gray-100 p-1">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
+        <div className="mb-4 flex justify-center gap-1 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
           <TabButton tab="generate" label="🔐 Generar" />
           <TabButton tab="compare" label="🔍 Comparar" />
           <TabButton tab="decode" label="🔓 Decodificar JWT" />
@@ -662,28 +662,28 @@ export default function PasswordHash() {
       </section>
 
       {/* Result section */}
-      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100">
+      <section className="rounded-2xl bg-white p-6 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
         {mode === "generate" && (
           <div className="text-center">
             <p className={lbl}>{algorithm === "jwt" ? "Token" : "Resultado"}</p>
             {loading ? (
-              <div className="mt-3 h-12 animate-pulse rounded-lg bg-gray-100" />
+              <div className="mt-3 h-12 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-700" />
             ) : hashResult ? (
               <>
-                <pre className="mt-3 max-h-56 overflow-auto break-all rounded-lg bg-gray-50 p-4 text-left font-mono text-sm text-gray-800 ring-1 ring-gray-200">
+                <pre className="mt-3 max-h-56 overflow-auto break-all rounded-lg bg-gray-50 p-4 text-left font-mono text-sm text-gray-800 ring-1 ring-gray-200 dark:bg-gray-800/50 dark:text-gray-200 dark:ring-gray-700">
                   {hashResult}
                 </pre>
                 <div className="mt-3 flex justify-center gap-2">
                   <button
                     onClick={() => copy(hashResult, algorithm === "jwt" ? "JWT" : "Hash")}
-                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
+                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
                   >
                     📋 Copiar
                   </button>
                 </div>
               </>
             ) : (
-              <p className="mt-3 text-sm text-gray-400">
+              <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">
                 {algorithm === "jwt"
                   ? "Ingresá una signing key para generar el JWT"
                   : "Ingresá una contraseña para generar el hash"}
@@ -696,7 +696,7 @@ export default function PasswordHash() {
           <div className="text-center">
             <p className={lbl}>Resultado de la comparación</p>
             {loading ? (
-              <div className="mx-auto mt-3 h-8 w-32 animate-pulse rounded-lg bg-gray-100" />
+              <div className="mx-auto mt-3 h-8 w-32 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-700" />
             ) : compareResult === true ? (
               <div className="mt-3 flex items-center justify-center gap-2 text-lg font-bold text-green-600">
                 <span className="text-2xl">✅</span> Coincide
@@ -706,7 +706,7 @@ export default function PasswordHash() {
                 <span className="text-2xl">❌</span> No coincide
               </div>
             ) : (
-              <p className="mt-3 text-sm text-gray-400">
+              <p className="mt-3 text-sm text-gray-400 dark:text-gray-500">
                 Ingresá una contraseña y un hash para comparar
               </p>
             )}
@@ -734,7 +734,7 @@ export default function PasswordHash() {
                 {jwtSecret && (
                   <div className="text-center">
                     {jwtVerifyResult === null ? (
-                      <div className="mx-auto h-8 w-32 animate-pulse rounded-lg bg-gray-100" />
+                      <div className="mx-auto h-8 w-32 animate-pulse rounded-lg bg-gray-100 dark:bg-gray-700" />
                     ) : jwtVerifyResult.verified ? (
                       <div className="flex items-center justify-center gap-2 text-sm font-bold text-green-600">
                         <span className="text-lg">✅</span> Firma verificada
@@ -744,7 +744,7 @@ export default function PasswordHash() {
                         <div className="flex items-center justify-center gap-2 text-sm font-bold text-red-500">
                           <span className="text-lg">❌</span> Firma inválida
                         </div>
-                        <p className="mt-1 text-xs text-gray-400">{jwtVerifyResult.error}</p>
+                        <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">{jwtVerifyResult.error}</p>
                       </div>
                     )}
                   </div>
@@ -753,7 +753,7 @@ export default function PasswordHash() {
                 <div className="flex justify-center gap-2">
                   <button
                     onClick={() => copy(jwtToken, "JWT")}
-                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700"
+                    className="rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400"
                   >
                     📋 Copiar JWT
                   </button>
@@ -761,14 +761,14 @@ export default function PasswordHash() {
                     onClick={() =>
                       copy(JSON.stringify(decodedJwt, null, 2), "JSON decodificado")
                     }
-                    className="rounded-lg border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+                    className="rounded-lg border border-gray-200 bg-white px-4 py-1.5 text-xs font-semibold text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                   >
                     📋 Copiar JSON
                   </button>
                 </div>
               </>
             ) : (
-              <p className="text-center text-sm text-gray-400">
+              <p className="text-center text-sm text-gray-400 dark:text-gray-500">
                 Pegá un JWT para decodificarlo
               </p>
             )}
@@ -776,7 +776,7 @@ export default function PasswordHash() {
         )}
       </section>
 
-      <footer className="text-center text-xs text-gray-400">
+      <footer className="text-center text-xs text-gray-400 dark:text-gray-500">
         Password Hash — todo se procesa localmente en tu navegador
       </footer>
     </div>

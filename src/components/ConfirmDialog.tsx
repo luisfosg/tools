@@ -37,10 +37,10 @@ export default function ConfirmDialog({
       <Trigger asChild>{trigger}</Trigger>
       <Portal>
         <Overlay className="fixed inset-0 z-50 bg-black/40 transition-all duration-200 data-[state=open]:opacity-100 data-[state=closed]:opacity-0" />
-        <Content className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-100 transition-all duration-200 data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:scale-95 data-[state=closed]:opacity-0">
-          <Title className="text-lg font-bold text-gray-800">{title}</Title>
+        <Content className="fixed left-1/2 top-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-white p-6 shadow-xl ring-1 ring-gray-100 transition-all duration-200 data-[state=open]:scale-100 data-[state=open]:opacity-100 data-[state=closed]:scale-95 data-[state=closed]:opacity-0 dark:bg-gray-900 dark:ring-gray-800">
+          <Title className="text-lg font-bold text-gray-800 dark:text-gray-100">{title}</Title>
           {description && (
-            <Description className="mt-2 text-sm text-gray-500">
+            <Description className="mt-2 text-sm text-gray-500 dark:text-gray-400">
               {description}
             </Description>
           )}
@@ -48,7 +48,7 @@ export default function ConfirmDialog({
             <Cancel asChild>
               <button
                 type="button"
-                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50"
+                className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 {cancelLabel}
               </button>
