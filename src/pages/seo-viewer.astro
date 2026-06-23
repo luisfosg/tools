@@ -1,19 +1,18 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import GradeCalculator from "../components/GradeCalculator";
+import SeoViewer from "../components/react/SeoViewer";
 import { projects } from "../data/projects";
 
-const project = projects.find((p) => p.slug === "noteffy");
+const project = projects.find((p) => p.slug === "seo-viewer");
 ---
 
 <Layout
-  title={`${project?.title ?? "Noteffy"} — Tools`}
-  description="Calculá tu promedio final al instante con Noteffy. Agregá categorías, materias y pesos para calcular notas ponderadas en tiempo real."
+  title={`${project?.title ?? "SEO Viewer"} — Tools`}
+  description="Analizá el SEO de cualquier página: title, meta description, Open Graph, Twitter Cards, canonical, headings y structured data. Con puntuación y recomendaciones."
   project={project}
 >
-  <h1 class="sr-only">Noteffy — Calculadora de notas ponderadas</h1>
+  <h1 class="sr-only">SEO Viewer — Analizador de SEO para páginas web</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
-    <!-- Back link -->
     <a
       href="/tools/"
       class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 transition-colors hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300"
@@ -22,5 +21,5 @@ const project = projects.find((p) => p.slug === "noteffy");
       Tools
     </a>
   </div>
-  <GradeCalculator client:load />
+  <SeoViewer client:load />
 </Layout>

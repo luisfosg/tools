@@ -6,7 +6,12 @@ import { projects } from "../data/projects";
 const project = projects.find((p) => p.slug === "timestamp");
 ---
 
-<Layout title={`${project?.title ?? "Timestamp"} — Tools`}>
+<Layout
+  title={`${project?.title ?? "Timestamp"} — Tools`}
+  description="Convertí timestamps Unix a ISO 8601, calculá diferencias entre fechas, convertí entre zonas horarias y formateá fechas online."
+  project={project}
+>
+  <h1 class="sr-only">Timestamp — Conversor de timestamps y zonas horarias</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
     <a
       href="/tools/"

@@ -6,7 +6,12 @@ import { projects } from "../data/projects";
 const project = projects.find((p) => p.slug === "barcode-generator");
 ---
 
-<Layout title={`${project?.title ?? "Barcode Generator"} — Tools`}>
+<Layout
+  title={`${project?.title ?? "Barcode Generator"} — Tools`}
+  description="Generá códigos de barras en 11 formatos: CODE128, EAN-13, UPC-A, CODE39, ITF-14 y más. Descargá en PNG o SVG."
+  project={project}
+>
+  <h1 class="sr-only">Barcode Generator — Generador de códigos de barras</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
     <a
       href="/tools/"

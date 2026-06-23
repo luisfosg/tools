@@ -63,4 +63,12 @@ export const projects: Project[] = [
     icon: "📞",
     status: "wip",
   },
+  {
+    slug: "seo-viewer",
+    title: "SEO Viewer",
+    description:
+      "Analizá el SEO de cualquier página web: title, meta tags, Open Graph, headings, structured data y más con puntuación y recomendaciones.",
+    icon: "🔍",
+    status: "active",
+  },
 ];

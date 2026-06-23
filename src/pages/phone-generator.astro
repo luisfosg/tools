@@ -6,7 +6,12 @@ import { projects } from "../data/projects";
 const project = projects.find((p) => p.slug === "phone-generator");
 ---
 
-<Layout title={`${project?.title ?? "Phone Generator"} — Tools`}>
+<Layout
+  title={`${project?.title ?? "Phone Generator"} — Tools`}
+  description="Generá números telefónicos de prueba por país, validalos e identificá el país de origen. Copiá en múltiples formatos."
+  project={project}
+>
+  <h1 class="sr-only">Phone Generator — Generador de números telefónicos de prueba</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
     <a
       href="/tools/"

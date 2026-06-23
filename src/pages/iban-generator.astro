@@ -6,7 +6,12 @@ import { projects } from "../data/projects";
 const project = projects.find((p) => p.slug === "iban-generator");
 ---
 
-<Layout title={`${project?.title ?? "IBAN Generator"} — Tools`}>
+<Layout
+  title={`${project?.title ?? "IBAN Generator"} — Tools`}
+  description="Generá IBANs de prueba válidos para la UE con BIC, banco y cuenta consistentes. Ideal para testing de sistemas de pago."
+  project={project}
+>
+  <h1 class="sr-only">IBAN Generator — Generador de IBANs de prueba</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
     <a
       href="/tools/"

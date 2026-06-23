@@ -6,7 +6,12 @@ import { projects } from "../data/projects";
 const project = projects.find((p) => p.slug === "qr-generator");
 ---
 
-<Layout title={`${project?.title ?? "QR Generator"} — Tools`}>
+<Layout
+  title={`${project?.title ?? "QR Generator"} — Tools`}
+  description="Generá códigos QR personalizados con colores, gradientes, logo y estilos. Descargá en PNG, SVG o JPG."
+  project={project}
+>
+  <h1 class="sr-only">QR Generator — Generador de códigos QR personalizados</h1>
   <div class="mx-auto max-w-5xl px-4 pt-4">
     <a
       href="/tools/"
