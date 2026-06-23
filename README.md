@@ -14,6 +14,7 @@ Colección de herramientas — hosteada en **GitHub Pages**.
 | [🏦 IBAN Generator](https://luisfosg.github.io/tools/iban-generator) | Generador de IBANs de prueba para la UE con datos bancarios consistentes |
 | [🔐 Password Hash](https://luisfosg.github.io/tools/password-hash) | Generación de hashes bcrypt, SHA, HMAC, PBKDF2 y JWT |
 | [▌ Barcode Generator](https://luisfosg.github.io/tools/barcode-generator) | Generá códigos de barras: CODE128, EAN-13, UPC-A, CODE39, ITF-14 y más |
+| [📞 Phone Generator](https://luisfosg.github.io/tools/phone-generator) | Generá números telefónicos de prueba por país, validalos e identificá el país de origen |
 
 ## Agregar una herramienta nueva
 

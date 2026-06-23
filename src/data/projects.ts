@@ -55,4 +55,12 @@ export const projects: Project[] = [
     icon: "▌",
     status: "active",
   },
+  {
+    slug: "phone-generator",
+    title: "Phone Generator",
+    description:
+      "Generá números telefónicos de prueba por país, validalos e identificá el país de origen. Copiá en múltiples formatos.",
+    icon: "📞",
+    status: "wip",
+  },
 ];
