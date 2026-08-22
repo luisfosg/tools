@@ -44,12 +44,30 @@ const DEFAULT_CATEGORIES = [
   },
 ];
 
+function makeSubject(name, categories = []) {
+  return {
+    id:
+      typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `subj-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    name,
+    categories,
+    collapsed: {},
+  };
+}
+
 function loadFromStorage() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (parsed.categories) return parsed;
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed.subjects) && parsed.subjects.length > 0) {
+      return parsed;
+    }
+    if (parsed.categories) {
+      const subject = makeSubject("Asignatura 1", parsed.categories);
+      subject.collapsed = parsed.collapsed ?? {};
+      return { subjects: [subject], activeId: subject.id };
     }
   } catch {
     /* ignore corrupt data */
@@ -93,12 +111,26 @@ const parseItemId = (id) => {
 };
 
 export default function GradeCalculator() {
-  const saved = loadFromStorage();
-  const [categories, setCategories] = useState(
-    saved?.categories ?? DEFAULT_CATEGORIES,
-  );
-  const [collapsed, setCollapsed] = useState(saved?.collapsed ?? {});
+  const [initial] = useState(() => {
+    const saved = loadFromStorage();
+    const subjects =
+      saved?.subjects ?? [makeSubject("Asignatura 1", structuredClone(DEFAULT_CATEGORIES))];
+    const activeId = subjects.some((s) => s.id === saved?.activeId)
+      ? saved.activeId
+      : subjects[0].id;
+    return { subjects, activeId };
+  });
+  const [subjects, setSubjects] = useState(initial.subjects);
+  const [currentSubjectId, setCurrentSubjectId] = useState(initial.activeId);
   const saveTimer = useRef(null);
+
+  const currentIdx = Math.max(
+    0,
+    subjects.findIndex((s) => s.id === currentSubjectId),
+  );
+  const currentSubject = subjects[currentIdx];
+  const categories = currentSubject.categories;
+  const collapsed = currentSubject.collapsed;
 
   /* Persist to localStorage on every change (debounced) */
   useEffect(() => {
@@ -106,25 +138,61 @@ export default function GradeCalculator() {
     saveTimer.current = setTimeout(() => {
       localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ categories, collapsed }),
+        JSON.stringify({ subjects, activeId: currentSubjectId }),
       );
     }, 600);
     return () => {
       if (saveTimer.current) clearTimeout(saveTimer.current);
     };
-  }, [categories, collapsed]);
+  }, [subjects, currentSubjectId]);
+
+  function commit(nextCategories, nextCollapsed = collapsed) {
+    setSubjects((prev) =>
+      prev.map((s) =>
+        s.id === currentSubject.id
+          ? { ...s, categories: nextCategories, collapsed: nextCollapsed }
+          : s,
+      ),
+    );
+  }
+
+  function addSubject() {
+    const subject = makeSubject(`Asignatura ${subjects.length + 1}`);
+    setSubjects((prev) => [...prev, subject]);
+    setCurrentSubjectId(subject.id);
+    sileo.success({ title: "Asignatura creada", description: subject.name });
+  }
+
+  function updateSubjectName(name) {
+    setSubjects((prev) =>
+      prev.map((s) => (s.id === currentSubject.id ? { ...s, name } : s)),
+    );
+  }
+
+  function removeSubject(subject) {
+    const next = subjects.filter((s) => s.id !== subject.id);
+    if (next.length === 0) {
+      const fresh = makeSubject("Asignatura 1");
+      setSubjects([fresh]);
+      setCurrentSubjectId(fresh.id);
+    } else {
+      setSubjects(next);
+      if (subject.id === currentSubjectId) setCurrentSubjectId(next[0].id);
+    }
+    sileo.info({ title: "Asignatura eliminada", description: subject.name });
+  }
 
   function updateScore(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
     const maxScore = next[catIdx].items[itemIdx].maxScore;
     next[catIdx].items[itemIdx].score = value === "" ? null : Math.min(Number(value), maxScore);
-    setCategories(next);
+    commit(next);
   }
 
   function updateWeight(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
     next[catIdx].items[itemIdx].weight = value === "" ? 0 : Number(value);
-    setCategories(next);
+    commit(next);
   }
 
   function updateMaxScore(catIdx, itemIdx, value) {
@@ -134,7 +202,7 @@ export default function GradeCalculator() {
     if (next[catIdx].items[itemIdx].score !== null) {
       next[catIdx].items[itemIdx].score = Math.min(next[catIdx].items[itemIdx].score, newMax);
     }
-    setCategories(next);
+    commit(next);
   }
 
   function addItem(catIdx) {
@@ -145,7 +213,7 @@ export default function GradeCalculator() {
       maxScore: 10,
       weight: 1,
     });
-    setCategories(next);
+    commit(next);
     sileo.success({ title: "Ítem agregado", description: `en ${next[catIdx].name}` });
   }
 
@@ -153,20 +221,18 @@ export default function GradeCalculator() {
     const item = categories[catIdx].items[itemIdx];
     const next = structuredClone(categories);
     next[catIdx].items.splice(itemIdx, 1);
-    setCategories(next);
+    commit(next);
     sileo.info({ title: "Ítem eliminado", description: item.name });
   }
 
   function updateItemName(catIdx, itemIdx, name) {
     const next = structuredClone(categories);
     next[catIdx].items[itemIdx].name = name;
-    setCategories(next);
+    commit(next);
   }
 
   function resetToDefaults() {
-    setCategories(structuredClone(DEFAULT_CATEGORIES));
-    setCollapsed({});
-    localStorage.removeItem(STORAGE_KEY);
+    commit(structuredClone(DEFAULT_CATEGORIES), {});
     sileo.success({ title: "Restablecido", description: "Valores por defecto restaurados" });
   }
 
@@ -178,7 +244,7 @@ export default function GradeCalculator() {
         { name: "Ítem 1", score: null, maxScore: 10, weight: 1 },
       ],
     });
-    setCategories(next);
+    commit(next);
     sileo.success({ title: "Sección agregada" });
   }
 
@@ -186,84 +252,74 @@ export default function GradeCalculator() {
     const name = categories[catIdx].name;
     const next = structuredClone(categories);
     next.splice(catIdx, 1);
-    setCategories(next);
+    commit(next);
     sileo.info({ title: "Sección eliminada", description: name });
   }
 
   function updateCategoryName(catIdx, name) {
     const next = structuredClone(categories);
     next[catIdx].name = name;
-    setCategories(next);
+    commit(next);
   }
 
   function toggleCollapse(catIdx) {
-    setCollapsed((prev) => ({ ...prev, [catIdx]: !prev[catIdx] }));
+    commit(categories, { ...collapsed, [catIdx]: !collapsed[catIdx] });
   }
 
   /* ── dnd-kit ── */
-  const [activeId, setActiveId] = useState(null);
+  const [draggingId, setDraggingId] = useState(null);
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
   function handleDragStart(event) {
-    setActiveId(event.active.id);
+    setDraggingId(event.active.id);
   }
 
   function handleDragEnd(event) {
     const { active, over } = event;
     if (!over || active.id === over.id) {
-      setActiveId(null);
+      setDraggingId(null);
       return;
     }
 
     const aId = String(active.id);
     const oId = String(over.id);
+    let next = null;
 
-    setCategories((prev) => {
-      /* Section reorder */
-      if (isSectionId(aId) && isSectionId(oId)) {
-        const oldIdx = parseSectionId(aId);
-        const newIdx = parseSectionId(oId);
-        if (oldIdx === newIdx) return prev;
-        return arrayMove(prev, oldIdx, newIdx);
+    if (isSectionId(aId) && isSectionId(oId)) {
+      const oldIdx = parseSectionId(aId);
+      const newIdx = parseSectionId(oId);
+      if (oldIdx !== newIdx) next = arrayMove(categories, oldIdx, newIdx);
+    } else if (isItemId(aId)) {
+      const [aCatIdx, aItemIdx] = parseItemId(aId);
+
+      let oCatIdx, oItemIdx;
+      if (isItemId(oId)) {
+        [oCatIdx, oItemIdx] = parseItemId(oId);
+      } else if (isSectionId(oId)) {
+        oCatIdx = parseSectionId(oId);
+        oItemIdx = categories[oCatIdx]?.items.length ?? 0;
       }
 
-      /* Item move / reorder */
-      if (isItemId(aId)) {
-        const [aCatIdx, aItemIdx] = parseItemId(aId);
+      if (aCatIdx !== undefined && oCatIdx !== undefined) {
+        next = structuredClone(categories);
 
-        let oCatIdx, oItemIdx;
-        if (isItemId(oId)) {
-          [oCatIdx, oItemIdx] = parseItemId(oId);
-        } else if (isSectionId(oId)) {
-          oCatIdx = parseSectionId(oId);
-          oItemIdx = prev[oCatIdx]?.items.length ?? 0;
-        } else {
-          return prev;
-        }
-
-        if (aCatIdx === undefined || oCatIdx === undefined) return prev;
-
-        /* Same section — use arrayMove which handles index adjustment */
         if (aCatIdx === oCatIdx) {
-          const next = structuredClone(prev);
           next[aCatIdx].items = arrayMove(next[aCatIdx].items, aItemIdx, oItemIdx);
-          return next;
+        } else {
+          const [item] = next[aCatIdx].items.splice(aItemIdx, 1);
+          if (item) {
+            next[oCatIdx].items.splice(oItemIdx, 0, item);
+          } else {
+            next = null;
+          }
         }
-
-        /* Cross-section move */
-        const next = structuredClone(prev);
-        const [item] = next[aCatIdx].items.splice(aItemIdx, 1);
-        if (!item) return prev;
-        next[oCatIdx].items.splice(oItemIdx, 0, item);
-        return next;
       }
+    }
 
-      return prev;
-    });
-
-    setActiveId(null);
+    if (next) commit(next);
+    setDraggingId(null);
   }
 
   const { totalWeighted, totalWeight, percentage, filledItems, totalItems } =
@@ -305,8 +361,60 @@ export default function GradeCalculator() {
         </p>
       </header>
 
+      {/* Subjects */}
+      <div className="flex items-center justify-center gap-2 overflow-x-auto pb-1">
+        {subjects.map((s) => (
+          <button
+            key={s.id}
+            onClick={() => setCurrentSubjectId(s.id)}
+            className={`whitespace-nowrap rounded-full px-4 py-2 text-sm font-semibold transition-colors ${
+              s.id === currentSubjectId
+                ? "bg-indigo-600 text-white shadow-md"
+                : "bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 ring-1 ring-gray-200 dark:ring-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 hover:ring-indigo-300 dark:hover:ring-indigo-600"
+            }`}
+          >
+            {s.name || "Sin nombre"}
+          </button>
+        ))}
+        <button
+          onClick={addSubject}
+          className="shrink-0 rounded-full border-2 border-dashed border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-400 dark:text-gray-500 transition-colors hover:border-indigo-300 dark:hover:border-indigo-600 hover:text-indigo-500 dark:hover:text-indigo-400"
+        >
+          + Asignatura
+        </button>
+      </div>
+
       {/* Summary Card */}
       <section className="rounded-2xl bg-white dark:bg-gray-900 p-6 shadow-lg ring-1 ring-gray-100 dark:ring-gray-800">
+        <div className="mb-5 flex items-center justify-between gap-3 border-b border-gray-100 dark:border-gray-800 pb-4">
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
+              Asignatura
+            </p>
+            <input
+              type="text"
+              value={currentSubject.name}
+              onChange={(e) => updateSubjectName(e.target.value)}
+              placeholder="Nombre de la asignatura"
+              className="w-full rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors hover:border-gray-200 dark:hover:border-gray-700 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
+            />
+          </div>
+          <ConfirmDialog
+            title="Eliminar asignatura"
+            description={`¿Eliminar la asignatura "${currentSubject.name}" y todas sus secciones?`}
+            confirmLabel="Eliminar"
+            onConfirm={() => removeSubject(currentSubject)}
+            trigger={
+              <button
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
+                title="Eliminar asignatura"
+              >
+                ✕
+              </button>
+            }
+          />
+        </div>
+
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <div className="text-center sm:text-left">
             <p className="text-sm font-medium uppercase tracking-wide text-gray-400 dark:text-gray-500">
@@ -444,7 +552,7 @@ className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dar
         </SortableContext>
 
         <DragOverlay>
-          {activeId ? (
+          {draggingId ? (
             <div className="rounded-2xl bg-white dark:bg-gray-900 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700">
               <div className="flex items-center gap-3 px-6 py-3">
                 <GripIcon />
@@ -465,7 +573,7 @@ className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dar
         </button>
         <ConfirmDialog
           title="Restablecer valores"
-          description="Se van a eliminar todos tus datos actuales y se restaurarán los valores por defecto."
+          description="Se van a eliminar los datos de la asignatura actual y se restaurarán los valores por defecto."
           confirmLabel="Restablecer"
           variant="default"
           onConfirm={resetToDefaults}
