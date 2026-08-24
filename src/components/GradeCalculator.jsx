@@ -102,7 +102,8 @@ function getClassification(pct) {
 /* ── dnd-kit ID helpers ── */
 const sectionId = (idx) => `section-${idx}`;
 const itemId = (catIdx, itemIdx) => `section-${catIdx}-item-${itemIdx}`;
-const isSectionId = (id) => String(id).startsWith("section-") && !String(id).includes("-item-");
+const isSectionId = (id) =>
+  String(id).startsWith("section-") && !String(id).includes("-item-");
 const isItemId = (id) => String(id).includes("-item-");
 const parseSectionId = (id) => parseInt(String(id).split("-")[1], 10);
 const parseItemId = (id) => {
@@ -113,8 +114,9 @@ const parseItemId = (id) => {
 export default function GradeCalculator() {
   const [initial] = useState(() => {
     const saved = loadFromStorage();
-    const subjects =
-      saved?.subjects ?? [makeSubject("Asignatura 1", structuredClone(DEFAULT_CATEGORIES))];
+    const subjects = saved?.subjects ?? [
+      makeSubject("Asignatura 1", structuredClone(DEFAULT_CATEGORIES)),
+    ];
     const activeId = subjects.some((s) => s.id === saved?.activeId)
       ? saved.activeId
       : subjects[0].id;
@@ -163,6 +165,21 @@ export default function GradeCalculator() {
     sileo.success({ title: "Asignatura creada", description: subject.name });
   }
 
+  function duplicateSubject(subject) {
+    const copy = makeSubject(
+      `${subject.name || "Sin nombre"} (copia)`,
+      structuredClone(subject.categories),
+    );
+    setSubjects((prev) => {
+      const idx = prev.findIndex((s) => s.id === subject.id);
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+    setCurrentSubjectId(copy.id);
+    sileo.success({ title: "Asignatura duplicada", description: copy.name });
+  }
+
   function updateSubjectName(name) {
     setSubjects((prev) =>
       prev.map((s) => (s.id === currentSubject.id ? { ...s, name } : s)),
@@ -185,7 +202,8 @@ export default function GradeCalculator() {
   function updateScore(catIdx, itemIdx, value) {
     const next = structuredClone(categories);
     const maxScore = next[catIdx].items[itemIdx].maxScore;
-    next[catIdx].items[itemIdx].score = value === "" ? null : Math.min(Number(value), maxScore);
+    next[catIdx].items[itemIdx].score =
+      value === "" ? null : Math.min(Number(value), maxScore);
     commit(next);
   }
 
@@ -200,7 +218,10 @@ export default function GradeCalculator() {
     const newMax = value === "" ? 10 : Number(value);
     next[catIdx].items[itemIdx].maxScore = newMax;
     if (next[catIdx].items[itemIdx].score !== null) {
-      next[catIdx].items[itemIdx].score = Math.min(next[catIdx].items[itemIdx].score, newMax);
+      next[catIdx].items[itemIdx].score = Math.min(
+        next[catIdx].items[itemIdx].score,
+        newMax,
+      );
     }
     commit(next);
   }
@@ -214,7 +235,10 @@ export default function GradeCalculator() {
       weight: 1,
     });
     commit(next);
-    sileo.success({ title: "Ítem agregado", description: `en ${next[catIdx].name}` });
+    sileo.success({
+      title: "Ítem agregado",
+      description: `en ${next[catIdx].name}`,
+    });
   }
 
   function removeItem(catIdx, itemIdx) {
@@ -233,16 +257,17 @@ export default function GradeCalculator() {
 
   function resetToDefaults() {
     commit(structuredClone(DEFAULT_CATEGORIES), {});
-    sileo.success({ title: "Restablecido", description: "Valores por defecto restaurados" });
+    sileo.success({
+      title: "Restablecido",
+      description: "Valores por defecto restaurados",
+    });
   }
 
   function addCategory() {
     const next = structuredClone(categories);
     next.push({
       name: "Nueva sección",
-      items: [
-        { name: "Ítem 1", score: null, maxScore: 10, weight: 1 },
-      ],
+      items: [{ name: "Ítem 1", score: null, maxScore: 10, weight: 1 }],
     });
     commit(next);
     sileo.success({ title: "Sección agregada" });
@@ -306,7 +331,11 @@ export default function GradeCalculator() {
         next = structuredClone(categories);
 
         if (aCatIdx === oCatIdx) {
-          next[aCatIdx].items = arrayMove(next[aCatIdx].items, aItemIdx, oItemIdx);
+          next[aCatIdx].items = arrayMove(
+            next[aCatIdx].items,
+            aItemIdx,
+            oItemIdx,
+          );
         } else {
           const [item] = next[aCatIdx].items.splice(aItemIdx, 1);
           if (item) {
@@ -333,7 +362,8 @@ export default function GradeCalculator() {
         for (const item of cat.items) {
           totalItems++;
           if (item.score !== null && item.score !== "" && item.maxScore > 0) {
-            totalWeighted += Math.min(item.score / item.maxScore, 1) * item.weight;
+            totalWeighted +=
+              Math.min(item.score / item.maxScore, 1) * item.weight;
             totalWeight += item.weight;
             filledItems++;
           } else {
@@ -342,9 +372,16 @@ export default function GradeCalculator() {
         }
       }
 
-      const percentage = totalWeight > 0 ? (totalWeighted / totalWeight) * 100 : 0;
+      const percentage =
+        totalWeight > 0 ? (totalWeighted / totalWeight) * 100 : 0;
 
-      return { totalWeighted, totalWeight, percentage, filledItems, totalItems };
+      return {
+        totalWeighted,
+        totalWeight,
+        percentage,
+        filledItems,
+        totalItems,
+      };
     }, [categories]);
 
   return (
@@ -399,20 +436,29 @@ export default function GradeCalculator() {
               className="w-full rounded-lg border border-transparent bg-transparent px-1 py-0.5 text-xl font-bold text-gray-800 dark:text-gray-100 transition-colors hover:border-gray-200 dark:hover:border-gray-700 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
             />
           </div>
-          <ConfirmDialog
-            title="Eliminar asignatura"
-            description={`¿Eliminar la asignatura "${currentSubject.name}" y todas sus secciones?`}
-            confirmLabel="Eliminar"
-            onConfirm={() => removeSubject(currentSubject)}
-            trigger={
-              <button
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
-                title="Eliminar asignatura"
-              >
-                ✕
-              </button>
-            }
-          />
+          <div className="flex shrink-0 items-center gap-1">
+            <button
+              onClick={() => duplicateSubject(currentSubject)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-500"
+              title="Duplicar asignatura"
+            >
+              <CopyIcon />
+            </button>
+            <ConfirmDialog
+              title="Eliminar asignatura"
+              description={`¿Eliminar la asignatura "${currentSubject.name}" y todas sus secciones?`}
+              confirmLabel="Eliminar"
+              onConfirm={() => removeSubject(currentSubject)}
+              trigger={
+                <button
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
+                  title="Eliminar asignatura"
+                >
+                  ✕
+                </button>
+              }
+            />
+          </div>
         </div>
 
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
@@ -422,7 +468,9 @@ export default function GradeCalculator() {
             </p>
             <p className={`text-6xl font-black ${getGradeColor(percentage)}`}>
               {percentage.toFixed(1)}
-              <span className="text-2xl font-normal text-gray-400 dark:text-gray-500">%</span>
+              <span className="text-2xl font-normal text-gray-400 dark:text-gray-500">
+                %
+              </span>
             </p>
             <p className="mt-1 text-lg font-semibold text-gray-600 dark:text-gray-400">
               {getClassification(percentage)}
@@ -438,8 +486,10 @@ export default function GradeCalculator() {
                 / {totalWeight.toFixed(2)} pts
               </span>
               <span>
-                <span className="font-semibold text-gray-700 dark:text-gray-200">{filledItems}</span> /{" "}
-                {totalItems} ítems
+                <span className="font-semibold text-gray-700 dark:text-gray-200">
+                  {filledItems}
+                </span>{" "}
+                / {totalItems} ítems
               </span>
             </div>
             {/* Progress bar */}
@@ -454,7 +504,11 @@ export default function GradeCalculator() {
       </section>
 
       {/* Categories */}
-      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
         <SortableContext
           items={categories.map((_, i) => sectionId(i))}
           strategy={verticalListSortingStrategy}
@@ -502,7 +556,7 @@ export default function GradeCalculator() {
                     onConfirm={() => removeCategory(catIdx)}
                     trigger={
                       <button
-className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
+                        className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-red-50 dark:hover:bg-red-900/30 hover:text-red-500"
                         title="Eliminar sección"
                       >
                         ✕
@@ -578,9 +632,7 @@ className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dar
           variant="default"
           onConfirm={resetToDefaults}
           trigger={
-            <button
-              className="rounded-lg px-4 py-3 text-sm font-semibold text-gray-400 dark:text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-400"
-            >
+            <button className="rounded-lg px-4 py-3 text-sm font-semibold text-gray-400 dark:text-gray-500 transition-colors hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-400">
               Restablecer
             </button>
           }
@@ -600,7 +652,14 @@ className="flex h-7 w-7 items-center justify-center rounded-lg text-gray-300 dar
    ───────────────────────────────────────────── */
 
 function SortableSection({ id, children }) {
-  const { setNodeRef, transform, transition, isDragging, listeners, attributes } = useSortable({ id });
+  const {
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+    listeners,
+    attributes,
+  } = useSortable({ id });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -618,8 +677,26 @@ function SortableSection({ id, children }) {
   );
 }
 
-function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWeight, onUpdateMaxScore, onUpdateName, onRemove }) {
-  const { setNodeRef, setActivatorNodeRef, transform, transition, isDragging, listeners, attributes } = useSortable({ id });
+function SortableItemRow({
+  id,
+  catIdx,
+  itemIdx,
+  item,
+  onUpdateScore,
+  onUpdateWeight,
+  onUpdateMaxScore,
+  onUpdateName,
+  onRemove,
+}) {
+  const {
+    setNodeRef,
+    setActivatorNodeRef,
+    transform,
+    transition,
+    isDragging,
+    listeners,
+    attributes,
+  } = useSortable({ id });
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -664,7 +741,9 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         className="w-16 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 px-2 py-1.5 text-center text-sm transition-colors hover:border-gray-300 dark:hover:border-gray-600 focus:border-indigo-400 focus:bg-white dark:focus:bg-gray-800 focus:outline-none"
       />
 
-      <span className="hidden text-gray-300 dark:text-gray-500 md:inline">/</span>
+      <span className="hidden text-gray-300 dark:text-gray-500 md:inline">
+        /
+      </span>
 
       <input
         type="number"
@@ -696,6 +775,19 @@ function SortableItemRow({ id, catIdx, itemIdx, item, onUpdateScore, onUpdateWei
         ✕
       </button>
     </div>
+  );
+}
+
+function CopyIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className="h-4 w-4"
+    >
+      <path d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75" />
+    </svg>
   );
 }
 
