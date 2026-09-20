@@ -138,8 +138,9 @@ export default function QrGenerator() {
     }
   }, []);
 
-  /* ── init QR instance (once) ── */
+  /* ── init QR instance (una vez hidratado: el contenedor solo existe en el UI real) ── */
   useEffect(() => {
+    if (!hydrated) return;
     const el = containerRef.current;
     if (!el) return;
 
@@ -161,14 +162,26 @@ export default function QrGenerator() {
       cornersSquareOptions: { type: "square" },
       cornersDotOptions: { type: "dot" },
     });
-    qr.append(el);
+
+    /* `append()` es síncrono en qr-code-styling 1.9.x (no devuelve Promise) */
+    try {
+      qr.append(el);
+    } catch (err) {
+      console.error("QRCodeStyling init/append failed:", err);
+      // fallback visible: avisá en el contenedor
+      const fallback = document.createElement("p");
+      fallback.className =
+        "px-4 text-center text-sm text-gray-400 dark:text-gray-500";
+      fallback.textContent = "No se pudo generar el QR";
+      el.appendChild(fallback);
+    }
     qrRef.current = qr;
 
     return () => {
       el.innerHTML = "";
       qrRef.current = null;
     };
-  }, []);
+  }, [hydrated]);
 
   /* ── build current options and update QR ── */
   const pushUpdate = useCallback(() => {

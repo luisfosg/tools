@@ -173,8 +173,9 @@ export default function BarcodeGenerator() {
     }
   }, []);
 
-  /* ── render barcode on every option change ── */
+  /* ── render barcode on every option change (solo cuando el SVG existe, post-hidratación) ── */
   useEffect(() => {
+    if (!hydrated) return;
     const svg = svgRef.current;
     if (!svg || !text.trim()) return;
 
@@ -231,6 +232,7 @@ export default function BarcodeGenerator() {
     textPosition,
     textMargin,
     margin,
+    hydrated,
   ]);
 
   /* ── debounced history save ── */
