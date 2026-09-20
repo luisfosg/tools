@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Toaster, sileo } from "sileo";
+import { useHydrated, NoteffySkeleton, useSaveStatus, SaveIndicator } from "./react/SkeletonKit";
 import {
   DndContext,
   DragOverlay,
@@ -125,6 +126,8 @@ export default function GradeCalculator() {
   const [subjects, setSubjects] = useState(initial.subjects);
   const [currentSubjectId, setCurrentSubjectId] = useState(initial.activeId);
   const saveTimer = useRef(null);
+  const hydrated = useHydrated();
+  const saveStatus = useSaveStatus(JSON.stringify([subjects, currentSubjectId]), 600);
 
   const currentIdx = Math.max(
     0,
@@ -384,6 +387,8 @@ export default function GradeCalculator() {
       };
     }, [categories]);
 
+  if (!hydrated) return <NoteffySkeleton />;
+
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
       <Toaster position="top-right" theme="system" />
@@ -437,6 +442,7 @@ export default function GradeCalculator() {
             />
           </div>
           <div className="flex shrink-0 items-center gap-1">
+            <SaveIndicator status={saveStatus} label="Notas" />
             <button
               onClick={() => duplicateSubject(currentSubject)}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-300 dark:text-gray-500 transition-colors hover:bg-indigo-50 dark:hover:bg-indigo-900/30 hover:text-indigo-500"

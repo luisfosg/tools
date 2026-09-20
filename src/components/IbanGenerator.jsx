@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Toaster, sileo } from "sileo";
 import { COUNTRIES, getCountryList } from "../data/iban-data";
+import { useHydrated, IbanSkeleton } from "./react/SkeletonKit";
 
 /* ───────── helpers ───────── */
 
@@ -97,6 +98,7 @@ export default function IbanGenerator() {
   const [bankIdx, setBankIdx] = useState(-1);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
+  const hydrated = useHydrated();
 
   const banks = countryCode ? COUNTRIES[countryCode].banks : [];
 
@@ -130,6 +132,8 @@ export default function IbanGenerator() {
     "rounded-lg border border-gray-200 bg-gray-50/50 px-3 py-2 text-sm text-gray-700 transition-colors hover:border-gray-300 focus:border-indigo-400 focus:bg-white focus:outline-none dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-200 dark:hover:border-gray-600 dark:focus:bg-gray-800";
   const sel = inp + " w-full sm:w-auto";
   const lbl =     "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
+
+  if (!hydrated) return <IbanSkeleton />;
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">

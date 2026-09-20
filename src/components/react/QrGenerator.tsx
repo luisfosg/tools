@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Toaster, sileo } from "sileo";
 import QRCodeStyling from "qr-code-styling";
+import { useHydrated, QrSkeleton, useSaveStatus, SaveIndicator } from "./SkeletonKit";
 import type {
   DotType,
   CornerSquareType,
@@ -118,6 +119,8 @@ export default function QrGenerator() {
   const [bgGradRotation, setBgGradRotation] = useState(90);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [activePreset, setActivePreset] = useState<string | null>("Dark");
+  const hydrated = useHydrated();
+  const saveStatus = useSaveStatus(data, 1000);
 
   /* ── refs ── */
   const containerRef = useRef<HTMLDivElement>(null);
@@ -342,6 +345,8 @@ export default function QrGenerator() {
   const lbl = "text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500";
 
   /* ── render ── */
+  if (!hydrated) return <QrSkeleton />;
+
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
       <Toaster position="top-right" theme="system" />
@@ -596,7 +601,10 @@ export default function QrGenerator() {
           {/* ── History ── */}
           {history.length > 0 && (
             <div className="mt-4 rounded-2xl bg-white p-5 shadow-lg ring-1 ring-gray-100 dark:bg-gray-900 dark:ring-gray-800">
-              <h2 className={cx(lbl, "mb-3")}>Historial</h2>
+              <div className="mb-3 flex items-center justify-between gap-2">
+                <h2 className={cx(lbl, "")}>Historial</h2>
+                <SaveIndicator status={saveStatus} label="Historial" />
+              </div>
               <div className="space-y-2">
                 {history.map((item, i) => (
                   <div

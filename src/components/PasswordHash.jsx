@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Toaster, sileo } from "sileo";
 import bcrypt from "bcryptjs";
+import { useHydrated, PasswordSkeleton } from "./react/SkeletonKit";
 import {
   SignJWT,
   importJWK,
@@ -342,6 +343,7 @@ export default function PasswordHash() {
   const [fields, setFields] = useState(() => getDefaultFields("bcrypt"));
   const [hashResult, setHashResult] = useState("");
   const [loading, setLoading] = useState(false);
+  const hydrated = useHydrated();
 
   /* compare state */
   const [compareHash, setCompareHash] = useState("");
@@ -631,6 +633,8 @@ export default function PasswordHash() {
   }
 
   /* ───── main render ───── */
+
+  if (!hydrated) return <PasswordSkeleton />;
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">

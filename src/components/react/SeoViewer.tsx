@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { Toaster, sileo } from "sileo";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { useHydrated } from "./SkeletonKit";
 
 /* ───────── types ───────── */
 
@@ -192,29 +193,39 @@ function SkeletonScoreCard() {
   );
 }
 
-function SkeletonContentCards() {
+function SkeletonSectionGrid() {
   return (
     <div className="grid gap-6 sm:grid-cols-2">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-gray-200 p-5 dark:border-gray-700">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <section key={i} className={card}>
           <div className="mb-3 flex items-center gap-2">
-            <Skeleton circle width={20} height={20} />
-            <Skeleton width={120} height={16} />
+            <Skeleton circle width={22} height={22} />
+            <Skeleton width={i % 2 === 0 ? 130 : 90} height={16} />
           </div>
-          <Skeleton width="100%" height={12} count={3} />
-        </div>
+          <Skeleton width="100%" height={12} count={2} />
+          <Skeleton width={`${60 + (i % 3) * 10}%`} height={12} className="mt-2" />
+        </section>
       ))}
     </div>
   );
 }
 
-function SkeletonIssues() {
+function SkeletonChecklist() {
   return (
     <section className={card}>
       <Skeleton width={160} height={20} className="mb-4" />
-      <div className="space-y-2">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} width={`${70 + i * 5}%`} height={14} />
+      <div className="grid gap-2 sm:grid-cols-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-3 rounded-lg border border-gray-50 bg-gray-50/30 px-3 py-2.5 dark:border-gray-800 dark:bg-gray-800/20"
+          >
+            <Skeleton circle width={16} height={16} />
+            <div className="min-w-0 flex-1">
+              <Skeleton width={`${55 + (i % 4) * 8}%`} height={13} />
+              <Skeleton width="80%" height={10} className="mt-1" />
+            </div>
+          </div>
         ))}
       </div>
     </section>
@@ -246,9 +257,33 @@ function ResultsSkeleton() {
     <div className="animate-pulse space-y-6">
       <SkeletonScoreCard />
       <SkeletonBadges />
-      <SkeletonContentCards />
+      <SkeletonSectionGrid />
       <SkeletonSocialPreview />
-      <SkeletonIssues />
+      <SkeletonChecklist />
+    </div>
+  );
+}
+
+/** Skeleton del primer paint: header + input card + resultados (mismo layout real). */
+function SeoViewerPageSkeleton() {
+  return (
+    <div className="mx-auto max-w-5xl space-y-6 px-4 py-8" aria-busy="true" aria-label="Cargando SEO Viewer">
+      <header className="text-center">
+        <div className="mx-auto" style={{ width: 240 }}>
+          <Skeleton width="100%" height={30} />
+        </div>
+        <div className="mx-auto mt-2" style={{ width: 320 }}>
+          <Skeleton width="100%" height={13} />
+        </div>
+      </header>
+      <section className={card}>
+        <Skeleton width="100%" height={38} />
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <Skeleton width={180} height={14} />
+          <Skeleton width={120} height={38} borderRadius={8} />
+        </div>
+      </section>
+      <ResultsSkeleton />
     </div>
   );
 }
@@ -1081,6 +1116,7 @@ export default function SeoViewer() {
   const [showSocialPreview, setShowSocialPreview] = useState(false);
   const [initialLoadDone, setInitialLoadDone] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const hydrated = useHydrated();
 
   /* ── auto-analyze on mount ── */
   useEffect(() => {
@@ -1173,6 +1209,8 @@ export default function SeoViewer() {
   );
 
   /* ── render ── */
+  if (!hydrated) return <SeoViewerPageSkeleton />;
+
   return (
     <div className="mx-auto max-w-5xl space-y-6 px-4 py-8">
       <Toaster position="top-right" theme="system" />

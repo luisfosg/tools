@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { Toaster, sileo } from "sileo";
+import { useHydrated, TimestampSkeleton } from "./react/SkeletonKit";
 
 const COMMON_TZS = [
   { label: "UTC", value: "UTC" },
@@ -449,6 +450,9 @@ function getTZOffset(date, tz) {
 /* ────────── Main Component ────────── */
 export default function TimestampTool() {
   const [activeTab, setActiveTab] = useState("unix");
+  const hydrated = useHydrated();
+
+  if (!hydrated) return <TimestampSkeleton />;
 
   return (
     <div className="mx-auto max-w-4xl space-y-8 px-4 py-8 sm:py-12">

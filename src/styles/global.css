@@ -3,9 +3,55 @@
 /* Dark mode híbrido: respeta prefers-color-scheme + toggle manual con clase .dark */
 @variant dark (&:where(.dark, .dark *));
 
+/* ── Skeletons: casi imperceptibles ─────────────────────────────
+   Van FUERA de @layer base a propósito: el CSS sin capa siempre gana
+   al de react-loading-skeleton en el cascade (y el minificador no lo
+   descarta), así el skeleton se ve tal cual lo definimos aquí:
+   el color del fondo de la página (bg-gray-50 / bg-gray-950) con una
+   pequeña tonalidad diferente y shimmer DESACTIVADO (display:none),
+   para que apenas se perciba que está cargando. */
+html .react-loading-skeleton,
+html .react-loading-skeleton::after {
+  --base-color: #f3f4f6; /* un tono sobre el fondo claro (gray-50 #f9fafb) */
+  --highlight-color: #f9fafb; /* gray-50: el fondo exacto de la página */
+  --pseudo-element-display: none; /* sin shimmer animado */
+  background-color: var(--base-color);
+  opacity: 1;
+}
+/* Sin prefijo `html` a propósito: .dark se aplica SOBRE <html> mismo,
+   así que `html .dark …` nunca matchearía en dark mode. */
+.dark .react-loading-skeleton,
+.dark .react-loading-skeleton::after {
+  --base-color: #030712; /* gray-950: el fondo exacto de la página dark */
+  --highlight-color: #111827; /* un tono diferente (gray-900, el del card) */
+  --pseudo-element-display: none; /* sin shimmer animado */
+  background-color: var(--base-color);
+  opacity: 1;
+}
+
 @layer base {
   * {
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Tailwind v4 quitó cursor:pointer del preflight (botones usan cursor:default).
+     Restauramos la manita en todos los elementos interactivos estándar. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  [role="tab"]:not(:disabled),
+  [role="switch"]:not(:disabled),
+  [role="checkbox"]:not(:disabled),
+  [role="radio"]:not(:disabled),
+  [role="menuitem"]:not(:disabled),
+  [role="option"]:not(:disabled),
+  summary:not(:disabled),
+  label[for],
+  select:not(:disabled),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="range"]:not(:disabled),
+  input[type="file"]:not(:disabled) {
+    cursor: pointer;
   }
 
   /* Sileo toast description text in dark mode */

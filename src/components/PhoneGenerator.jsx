@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Toaster, sileo } from "sileo";
 import { COUNTRIES, getCountryList } from "../data/phone-data";
+import { useHydrated, PhoneSkeleton } from "./react/SkeletonKit";
 
 /* ───────── helpers ───────── */
 
@@ -174,6 +175,7 @@ export default function PhoneGenerator() {
   const [valResult, setValResult] = useState(null);
   const [idResults, setIdResults] = useState([]);
   const [history, setHistory] = useState([]);
+  const hydrated = useHydrated();
 
   /* ───── state derived ───── */
 
@@ -420,6 +422,8 @@ export default function PhoneGenerator() {
   }
 
   /* ───── main render ───── */
+
+  if (!hydrated) return <PhoneSkeleton />;
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 px-4 py-8">
